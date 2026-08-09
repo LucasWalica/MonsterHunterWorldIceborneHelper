@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,10 +13,15 @@ def env_bool(name, default=False):
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key-change-me")
 
-DEBUG = env_bool("DJANGO_DEBUG", True)
+DEBUG = env_bool("DJANGO_DEBUG", False)
+
+# Forzar DEBUG=True en tests (pytest/django test runner)
+if "test" in os.sys.argv or os.environ.get("PYTEST_CURRENT_TEST"):
+    DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
+CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -60,7 +66,23 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-if os.environ.get("POSTGRES_HOST"):
+# Base de datos: soporta DATABASE_URL (Neon, Supabase, Railway, etc.) o variables POSTGRES_*
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    parsed = urlparse(database_url)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": parsed.path.lstrip("/"),
+            "USER": parsed.username,
+            "PASSWORD": parsed.password,
+            "HOST": parsed.hostname,
+            "PORT": parsed.port or 5432,
+            "CONN_MAX_AGE": 60,
+            "OPTIONS": {"sslmode": "require"},
+        }
+    }
+elif os.environ.get("POSTGRES_HOST"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -69,10 +91,10 @@ if os.environ.get("POSTGRES_HOST"):
             "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "mhw"),
             "HOST": os.environ.get("POSTGRES_HOST", "db"),
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+            "CONN_MAX_AGE": 60,
         }
     }
 else:
-    # Fallback para desarrollo local sin Docker / checks rápidos.
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -88,8 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
-LANGUAGE_CODE = "es"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "UTC"
 
@@ -118,3 +139,16 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Seguridad en producción
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+    X_FRAME_OPTIONS = "DENY"
