@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Home · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <header class="text-center">
+        <h1 class="text-4xl font-extrabold tracking-tight text-amber-400">
+            Monster Hunter World: Iceborne
+        </h1>
+        <p class="mt-2 text-slate-400">
+            Damage calculator, set builder, bestiary and crafting tree.
+        </p>
+    </header>
+
+    {# Quick links to the main features #}
+    <section class="grid gap-4 sm:grid-cols-2">
+        <a href="{% url 'core:efr_calculator' %}" class="group rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-amber-500/60">
+            <h2 class="text-lg font-semibold text-amber-400 group-hover:text-amber-300">EFR Calculator</h2>
+            <p class="mt-1 text-sm text-slate-400">Effective raw and elemental damage based on sharpness, affinity and skills.</p>
+        </a>
+        <a href="{% url 'core:set_builder' %}" class="group rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-amber-500/60">
+            <h2 class="text-lg font-semibold text-amber-400 group-hover:text-amber-300">Set Builder</h2>
+            <p class="mt-1 text-sm text-slate-400">Sum skills from 5 pieces and optimize sets with the algorithm.</p>
+        </a>
+        <a href="{% url 'core:monster_list' %}" class="group rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-amber-500/60">
+            <h2 class="text-lg font-semibold text-amber-400 group-hover:text-amber-300">Bestiary</h2>
+            <p class="mt-1 text-sm text-slate-400">Monsters with elemental and status weaknesses, in real time.</p>
+        </a>
+        <a href="{% url 'core:weapon_list' %}" class="group rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-amber-500/60">
+            <h2 class="text-lg font-semibold text-amber-400 group-hover:text-amber-300">Weapons</h2>
+            <p class="mt-1 text-sm text-slate-400">Dynamic filtering and crafting tree with materials and drops.</p>
+        </a>
+    </section>
+
+    {# Database statistics (populated by the ETL) #}
+    <section class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p class="text-3xl font-bold text-amber-400">{{ monster_count }}</p>
+            <p class="text-sm text-slate-400">Monsters</p>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p class="text-3xl font-bold text-amber-400">{{ weapon_count }}</p>
+            <p class="text-sm text-slate-400">Weapons</p>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p class="text-3xl font-bold text-amber-400">{{ armor_count }}</p>
+            <p class="text-sm text-slate-400">Armor</p>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6 text-center">
+            <p class="text-3xl font-bold text-amber-400">{{ skill_count }}</p>
+            <p class="text-sm text-slate-400">Skills</p>
+        </div>
+    </section>
+
+    {# Minimal HTMX demo: no page reload #}
+    <section class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+        <h2 class="text-lg font-semibold">HTMX test</h2>
+        <button
+            hx-get="{% url 'core:ping' %}"
+            hx-target="#ping-result"
+            hx-swap="innerHTML"
+            class="mt-3 rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-950 hover:bg-amber-400"
+        >
+            Send HTMX request
+        </button>
+        <p id="ping-result" class="mt-3 text-sm text-slate-300"></p>
+    </section>
+
+</div>
+{% endblock %}

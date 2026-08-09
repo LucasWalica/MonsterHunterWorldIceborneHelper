@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}{{ monster.name }} · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<nav class="text-sm text-slate-400">
+    <a href="{% url 'core:monster_list' %}" class="hover:text-amber-400">Bestiary</a>
+    <span class="mx-1">/</span>
+    <span class="text-slate-200">{{ monster.name }}</span>
+</nav>
+
+<div class="mt-4 grid gap-6 lg:grid-cols-3">
+    <div class="space-y-6 lg:col-span-2">
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-amber-400">{{ monster.name }}</h1>
+                    <p class="mt-1 text-sm text-slate-400 capitalize">{{ monster.species|default:"Unknown species" }} · {{ monster.get_type_display }}</p>
+                </div>
+            </div>
+            {% if monster.description %}
+            <p class="mt-4 text-sm leading-relaxed text-slate-300">{{ monster.description }}</p>
+            {% endif %}
+
+            {% if monster.locations.all %}
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Habitat:</span>
+                {% for location in monster.locations.all %}
+                <span class="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-300">{{ location.name }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="text-lg font-semibold text-amber-400">Body hitzones</h2>
+            {% if monster.hitzones.all %}
+            <div class="mt-3 overflow-x-auto">
+                <table class="w-full text-center text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-700 text-xs uppercase tracking-wide text-slate-400">
+                            <th class="px-2 py-2 text-left">Part</th>
+                            <th class="px-2 py-2">Cut</th>
+                            <th class="px-2 py-2">Impact</th>
+                            <th class="px-2 py-2">Shot</th>
+                            <th class="px-2 py-2">Fire</th>
+                            <th class="px-2 py-2">Water</th>
+                            <th class="px-2 py-2">Thunder</th>
+                            <th class="px-2 py-2">Ice</th>
+                            <th class="px-2 py-2">Dragon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hitzone in monster.hitzones.all %}
+                        <tr class="border-b border-slate-800/60">
+                            <td class="px-2 py-2 text-left font-medium">{{ hitzone.part }}</td>
+                            <td class="px-2 py-2">{{ hitzone.cut }}</td>
+                            <td class="px-2 py-2">{{ hitzone.impact }}</td>
+                            <td class="px-2 py-2">{{ hitzone.shot }}</td>
+                            <td class="px-2 py-2 {% if hitzone.fire >= 25 %}text-red-400{% endif %}">{{ hitzone.fire }}</td>
+                            <td class="px-2 py-2 {% if hitzone.water >= 25 %}text-blue-400{% endif %}">{{ hitzone.water }}</td>
+                            <td class="px-2 py-2 {% if hitzone.thunder >= 25 %}text-yellow-400{% endif %}">{{ hitzone.thunder }}</td>
+                            <td class="px-2 py-2 {% if hitzone.ice >= 25 %}text-cyan-400{% endif %}">{{ hitzone.ice }}</td>
+                            <td class="px-2 py-2 {% if hitzone.dragon >= 25 %}text-purple-400{% endif %}">{{ hitzone.dragon }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="mt-3 text-sm text-slate-400">
+                mhw-db does not include hitzone data. This section will be ready once
+                community data is seeded (model <code class="text-slate-300">Hitzone</code>).
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="text-lg font-semibold text-amber-400">Weaknesses</h2>
+            <h3 class="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Elemental</h3>
+            <ul class="mt-2 space-y-1.5">
+                {% for weakness in elemental_weaknesses %}
+                <li class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-2">{{ weakness.element|element_badge }}<span class="text-xs text-slate-500">{{ weakness.condition }}</span></span>
+                    <span class="text-amber-300">{{ weakness.stars|stars_html }}</span>
+                </li>
+                {% empty %}
+                <li class="text-sm text-slate-500">No elemental weaknesses.</li>
+                {% endfor %}
+            </ul>
+            <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Status</h3>
+            <ul class="mt-2 space-y-1.5">
+                {% for weakness in status_weaknesses %}
+                <li class="flex items-center justify-between">
+                    <span>{{ weakness.element|element_badge }}</span>
+                    <span class="text-amber-300">{{ weakness.stars|stars_html }}</span>
+                </li>
+                {% empty %}
+                <li class="text-sm text-slate-500">No status weaknesses.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="text-lg font-semibold text-amber-400">Resistances</h2>
+            <ul class="mt-2 space-y-1.5">
+                {% for resistance in monster.resistances.all %}
+                <li class="flex items-center justify-between">
+                    <span>{{ resistance.element|element_badge }}</span>
+                    <span class="text-slate-300">{{ resistance.stars|stars_html }}</span>
+                </li>
+                {% empty %}
+                <li class="text-sm text-slate-500">No resistances registered.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if monster.ailments.all %}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="text-lg font-semibold text-amber-400">Status ailments inflicted</h2>
+            <ul class="mt-2 space-y-2">
+                {% for ailment in monster.ailments.all %}
+                <li class="text-sm">
+                    <p class="font-medium">{{ ailment.name }}</p>
+                    {% if ailment.description %}<p class="text-xs text-slate-500">{{ ailment.description }}</p>{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

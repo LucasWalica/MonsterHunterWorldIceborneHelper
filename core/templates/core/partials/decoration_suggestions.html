@@ -1,0 +1,31 @@
+{% if decorations %}
+<ul class="max-h-72 divide-y divide-slate-800 overflow-y-auto rounded-lg border border-slate-700 bg-slate-800 shadow-xl">
+    {% for deco in decorations %}
+    <li>
+        <button
+            type="button"
+            data-armor-slot="{{ slot }}"
+            data-pk="{{ deco.pk }}"
+            data-name="{{ deco.name }}"
+            onclick="selectDeco(this)"
+            title="{% for ds in deco.decoration_skills.all %}{{ ds.skill.name }} Lv{{ ds.level }}{% if not forloop.last %} · {% endif %}{% endfor %}"
+            class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-slate-700"
+        >
+            <span>
+                <span class="text-slate-100">{{ deco.name }}</span>
+                {% for ds in deco.decoration_skills.all %}
+                <span class="ml-2 text-xs text-amber-400">{{ ds.skill.name }} Lv{{ ds.level }}</span>
+                {% endfor %}
+            </span>
+            <span class="shrink-0 rounded bg-slate-700 px-1.5 py-0.5 text-[10px] font-semibold text-slate-300">
+                [{{ deco.slot }}]
+            </span>
+        </button>
+    </li>
+    {% endfor %}
+</ul>
+{% elif q %}
+<div class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-400 shadow-xl">
+    No matches for "{{ q }}".
+</div>
+{% endif %}

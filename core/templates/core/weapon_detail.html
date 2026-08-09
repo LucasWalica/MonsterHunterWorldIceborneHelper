@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}{{ weapon.name }} · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<nav class="text-sm text-slate-400">
+    <a href="{% url 'core:weapon_list' %}" class="hover:text-amber-400">Weapons</a>
+    <span class="mx-1">/</span>
+    <span class="text-slate-200">{{ weapon.name }}</span>
+</nav>
+
+<div class="mt-4 grid gap-6 lg:grid-cols-3">
+    {# Columna principal: stats del arma #}
+    <div class="space-y-6 lg:col-span-2">
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-amber-400">{{ weapon.name }}</h1>
+                    <p class="mt-1 text-sm text-slate-400">
+                        {{ weapon.get_weapon_type_display }} · {{ weapon.get_damage_type_display }}
+                    </p>
+                </div>
+                <span class="text-sm text-slate-500">Rarity {{ weapon.rarity }} · {{ weapon.rarity|rarity_stars }}</span>
+            </div>
+
+            <dl class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div class="rounded-lg bg-slate-800/60 p-3 text-center">
+                    <dt class="text-xs uppercase tracking-wide text-slate-400">Attack (display)</dt>
+                    <dd class="text-2xl font-bold text-amber-400">{{ weapon.attack_display }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-3 text-center">
+                    <dt class="text-xs uppercase tracking-wide text-slate-400">True raw</dt>
+                    <dd class="text-2xl font-bold">{{ weapon.attack_raw }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-3 text-center">
+                    <dt class="text-xs uppercase tracking-wide text-slate-400">Affinity</dt>
+                    <dd class="text-2xl font-bold {% if weapon.affinity >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                        {{ weapon.affinity|stringformat:"+d" }}%
+                    </dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-3 text-center">
+                    <dt class="text-xs uppercase tracking-wide text-slate-400">Slots</dt>
+                    <dd class="flex items-center justify-center gap-1 pt-1">{{ weapon.slots|socket_spans }}</dd>
+                </div>
+            </dl>
+
+            {% if weapon.defense or weapon.elderseal %}
+            <p class="mt-4 text-sm text-slate-300">
+                {% if weapon.defense %}Defense +{{ weapon.defense }}{% endif %}
+                {% if weapon.defense and weapon.elderseal %} · {% endif %}
+                {% if weapon.elderseal %}Elderseal: {{ weapon.elderseal }}{% endif %}
+            </p>
+            {% endif %}
+
+            {% if weapon.elements %}
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+                {% for el in weapon.elements %}
+                <span class="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5">
+                    {{ el.type|element_badge }}
+                    <span class="text-sm font-semibold">{{ el.damage }}</span>
+                    {% if el.hidden %}<span class="text-[10px] uppercase text-slate-500">(hidden)</span>{% endif %}
+                </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="mt-6">
+                <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Sharpness</h2>
+                <div class="mt-2 flex h-3 w-full overflow-hidden rounded-full bg-slate-800">
+                    {% for color, pct in weapon.sharpness|sharpness_segments %}
+                    <span class="{{ color }}" title="{{ color }}" style="width: {{ pct }}%"></span>
+                    {% endfor %}
+                </div>
+                <p class="mt-2 text-xs text-slate-400">
+                    Available: {{ weapon.sharpness_levels|join:", " }}
+                </p>
+            </div>
+        </div>
+
+        {# Crafting tree #}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="text-lg font-semibold text-amber-400">Crafting tree</h2>
+
+            {% if chain|length > 1 %}
+            <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Upgrade chain</h3>
+            <ol class="mt-2 flex flex-wrap items-center gap-2">
+                {% for node in chain %}
+                <li class="flex items-center gap-2">
+                    <a href="{% url 'core:weapon_detail' node.pk %}"
+                       class="rounded-lg border px-3 py-1.5 text-sm transition
+                              {% if node.pk == weapon.pk %}border-amber-500 bg-amber-500/10 text-amber-400{% else %}border-slate-700 text-slate-300 hover:border-amber-500{% endif %}">
+                        {{ node.name }}
+                    </a>
+                    {% if not forloop.last %}<span class="text-slate-600">→</span>{% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+
+            {% if branches %}
+            <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Available branches</h3>
+            <ul class="mt-2 grid gap-2 sm:grid-cols-2">
+                {% for branch in branches %}
+                <li>
+                    <a href="{% url 'core:weapon_detail' branch.pk %}" class="flex items-center justify-between rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 transition hover:border-amber-500">
+                        <span>{{ branch.name }}</span>
+                        <span class="text-xs text-slate-500">{{ branch.attack_display }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if not chain|length > 1 and not branches %}
+            <p class="mt-2 text-sm text-slate-400">This weapon has no registered branches or upgrades.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Side column: materials #}
+    <div class="rounded-xl border border-slate-800 bg-slate-900 p-6">
+        <h2 class="text-lg font-semibold text-amber-400">Materials</h2>
+        <p class="mt-1 text-xs text-slate-500">
+            Cost: {{ weapon.crafting_cost }} zenny
+            {% if not weapon.craftable %} · Not directly craftable{% endif %}
+        </p>
+
+        {% for kind, label in materials_kinds %}
+        <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">{{ label }}</h3>
+        <ul class="mt-2 space-y-2">
+            {% for material in materials %}
+                {% if material.kind == kind %}
+                <li class="rounded-lg border border-slate-800 bg-slate-800/40 p-3">
+                    <div class="flex items-center justify-between">
+                        <a href="{% url 'core:item_detail' material.item_id %}" class="font-medium hover:text-amber-400">
+                            {{ material.item.name }}
+                        </a>
+                        <span class="text-sm font-bold text-amber-400">× {{ material.quantity }}</span>
+                    </div>
+                    {% with drops=material.item.monster_rewards.all %}
+                        {% if drops %}
+                        <p class="mt-1 text-xs text-slate-500">Dropped by:
+                            {% for reward in drops|slice:":4" %}
+                            <a href="{% url 'core:monster_detail' reward.monster_id %}" class="text-slate-400 hover:text-amber-400">{{ reward.monster.name }}</a>{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                            {% if drops|length > 4 %} and {{ drops|length|add:"-4" }} more{% endif %}
+                        </p>
+                        {% endif %}
+                    {% endwith %}
+                </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% endfor %}
+
+        {% if not materials %}
+        <p class="mt-3 text-sm text-slate-400">No materials registered.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

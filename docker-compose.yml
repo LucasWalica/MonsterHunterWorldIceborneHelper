@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: mhw_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mhw}
+      POSTGRES_USER: ${POSTGRES_USER:-mhw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mhw}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mhw} -d ${POSTGRES_DB:-mhw}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: mhw_web
+    command: ./entrypoint.local.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key-change-me}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-1}
+      POSTGRES_DB: ${POSTGRES_DB:-mhw}
+      POSTGRES_USER: ${POSTGRES_USER:-mhw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mhw}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  css:
+    build:
+      context: .
+      dockerfile: Dockerfile.tailwind
+    container_name: mhw_css
+    volumes:
+      - .:/app
+    # tailwind --watch sale con código 0 si stdin está cerrado.
+    stdin_open: true
+    command: tailwindcss -i ./src/input.css -o ./static/css/output.css --watch --poll
+    restart: unless-stopped
+
+volumes:
+  pgdata:

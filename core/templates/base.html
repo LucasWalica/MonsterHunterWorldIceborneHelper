@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MHW Iceborne App{% endblock %}</title>
+
+    {# CSS compilado por Tailwind (static/css/output.css) #}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    {# HTMX via CDN #}
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+</head>
+<body class="h-full bg-slate-950 text-slate-100 antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <nav class="border-b border-slate-800 bg-slate-900">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+            <a href="{% url 'core:home' %}" class="text-lg font-bold tracking-tight text-amber-400">
+                MHW: Iceborne
+            </a>
+            <ul class="flex items-center gap-6 text-sm text-slate-300">
+                <li><a href="{% url 'core:home' %}" class="hover:text-amber-400">Home</a></li>
+                <li><a href="{% url 'core:monster_list' %}" class="hover:text-amber-400">Monsters</a></li>
+                <li><a href="{% url 'core:weapon_list' %}" class="hover:text-amber-400">Weapons</a></li>
+                <li><a href="{% url 'core:efr_calculator' %}" class="hover:text-amber-400">Calculator</a></li>
+                <li><a href="{% url 'core:set_builder' %}" class="hover:text-amber-400">Set Builder</a></li>
+                <li><a href="{% url 'admin:index' %}" class="hover:text-amber-400">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="mx-auto max-w-6xl px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

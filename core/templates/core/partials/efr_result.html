@@ -1,0 +1,191 @@
+{% load mhw_extras %}
+{% if not weapon %}
+<div class="rounded-xl border border-dashed border-slate-700 bg-slate-900 p-10 text-center text-slate-400">
+    Select a weapon to start the calculation.
+</div>
+{% else %}
+<div class="grid gap-4 lg:grid-cols-2">
+    {# ---- Configuration controls ---- #}
+    <div class="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-4">
+
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Sharpness</label>
+                <select
+                    name="sharpness"
+                    hx-get="{% url 'core:efr_calculator' %}"
+                    hx-trigger="change"
+                    hx-target="#efr-result"
+                    hx-swap="innerHTML"
+                    hx-include="closest form"
+                    class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                >
+                    {% for color in available_sharpness %}
+                    <option value="{{ color }}" {% if sharpness == color %}selected{% endif %}>{{ color|capfirst }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Affinity % (optional)</label>
+                <input
+                    type="number"
+                    name="affinity"
+                    value="{{ values.affinity }}"
+                    placeholder="Use weapon's ({{ weapon.affinity }})"
+                    hx-get="{% url 'core:efr_calculator' %}"
+                    hx-trigger="change, input changed delay:400ms"
+                    hx-target="#efr-result"
+                    hx-swap="innerHTML"
+                    hx-include="closest form"
+                    class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {% for key, max_level in skill_max_levels.items %}
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ key|title }}</label>
+                <select
+                    name="{{ key }}"
+                    hx-get="{% url 'core:efr_calculator' %}"
+                    hx-trigger="change"
+                    hx-target="#efr-result"
+                    hx-swap="innerHTML"
+                    hx-include="closest form"
+                    class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                >
+                    {% for level in max_level|level_range %}
+                    <option value="{{ level }}" {% if values|get_item:key == level %}selected{% endif %}>{{ level }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endfor %}
+        </div>
+
+        <label class="mt-1 flex items-center gap-2 text-sm text-slate-300">
+            <input
+                type="checkbox"
+                name="agitator_active"
+                {% if values.agitator_active %}checked{% endif %}
+                hx-get="{% url 'core:efr_calculator' %}"
+                hx-trigger="change"
+                hx-target="#efr-result"
+                hx-swap="innerHTML"
+                hx-include="closest form"
+                class="h-4 w-4 rounded border-slate-600 bg-slate-800 accent-amber-500"
+            />
+            Agitator active (enraged monster)
+        </label>
+    </div>
+
+    {# ---- Resultado ---- #}
+    <div class="space-y-4">
+        <div class="rounded-xl border border-amber-500/30 bg-slate-900 p-5">
+            <div class="flex items-baseline justify-between">
+                <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-400">EFR Raw</h2>
+                <span class="text-3xl font-extrabold text-amber-400">{{ result.effective_raw|floatformat:2 }}</span>
+            </div>
+            <dl class="mt-3 grid grid-cols-2 gap-2 text-sm">
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Base raw</dt>
+                    <dd class="font-semibold">{{ result.base_raw }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Raw after skills</dt>
+                    <dd class="font-semibold">{{ result.raw_after_skills }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Sharpness multiplier</dt>
+                    <dd class="font-semibold">× {{ result.sharpness_raw_mult }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Affinity</dt>
+                    <dd class="font-semibold {% if result.affinity >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                        {{ result.affinity|stringformat:"+d" }}%
+                        {% if result.affinity_from_skills %}<span class="text-xs text-slate-500">({{ result.affinity_from_skills|stringformat:"+d" }}% from skills)</span>{% endif %}
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        {% if result.elements %}
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-400">
+                EFR Elemental <span class="text-amber-400">(total {{ result.effective_element_total|floatformat:2 }})</span>
+            </h2>
+            <ul class="mt-2 space-y-1.5 text-sm">
+                {% for el in result.elements %}
+                <li class="flex items-center justify-between rounded-lg bg-slate-800/60 px-3 py-2">
+                    <span class="inline-flex items-center gap-2">
+                        {{ el.type|element_badge }}
+                        <span class="text-xs text-slate-500">{{ el.true_value|floatformat:1 }} true</span>
+                    </span>
+                    <span class="font-semibold">{{ el.effective|floatformat:2 }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Estimated damage per hit</h2>
+            <div class="mt-3 grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">MV</label>
+                    <select
+                        name="motion_value"
+                        hx-get="{% url 'core:efr_calculator' %}"
+                        hx-trigger="change"
+                        hx-target="#efr-result"
+                        hx-swap="innerHTML"
+                        hx-include="closest form"
+                        class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                    >
+                        {% for label, value in motion_values %}
+                        <option value="{{ value }}" {% if values.motion_value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Hitzone raw %</label>
+                        <input
+                            type="number" name="hitzone_raw" value="{{ values.hitzone_raw }}" min="0" max="100"
+                            hx-get="{% url 'core:efr_calculator' %}"
+                            hx-trigger="change, input changed delay:400ms"
+                            hx-target="#efr-result" hx-swap="innerHTML" hx-include="closest form"
+                            class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                        />
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Hitzone elem %</label>
+                        <input
+                            type="number" name="hitzone_elem" value="{{ values.hitzone_elem }}" min="0" max="100"
+                            hx-get="{% url 'core:efr_calculator' %}"
+                            hx-trigger="change, input changed delay:400ms"
+                            hx-target="#efr-result" hx-swap="innerHTML" hx-include="closest form"
+                            class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <dl class="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Raw</dt>
+                    <dd class="text-lg font-bold text-amber-400">{{ result.estimated_raw_hit|floatformat:1 }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Elemental</dt>
+                    <dd class="text-lg font-bold">{{ result.estimated_element_hit|floatformat:1 }}</dd>
+                </div>
+                <div class="rounded-lg bg-slate-800/60 p-2">
+                    <dt class="text-xs text-slate-400">Total</dt>
+                    <dd class="text-lg font-bold text-amber-400">{{ result.estimated_total_hit|floatformat:1 }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endif %}

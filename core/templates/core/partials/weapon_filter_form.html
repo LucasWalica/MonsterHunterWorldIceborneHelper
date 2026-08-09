@@ -1,0 +1,91 @@
+{% load mhw_extras %}
+<form
+    hx-get="{% url 'core:weapon_list' %}"
+    hx-target="#weapon-results"
+    hx-swap="innerHTML"
+    hx-trigger="change, submit"
+    hx-push-url="true"
+    class="flex flex-wrap items-end gap-3 rounded-xl border border-slate-800 bg-slate-900 p-4"
+>
+    <div class="w-full sm:w-64">
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Search</label>
+        <input
+            type="search"
+            name="q"
+            value="{{ filters.q|default:'' }}"
+            placeholder="Weapon name..."
+            hx-trigger="input changed delay:300ms, search"
+            hx-include="closest form"
+            hx-get="{% url 'core:weapon_list' %}"
+            hx-target="#weapon-results"
+            hx-swap="innerHTML"
+            class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+        />
+    </div>
+
+    <div>
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Type</label>
+        <select name="type" class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none">
+            <option value="">All</option>
+            {% for value, label in weapon_types %}
+            <option value="{{ value }}" {% if filters.type == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Element</label>
+        <select name="element" class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none">
+            <option value="">All</option>
+            {% for value, label in element_choices %}
+            <option value="{{ value }}" {% if filters.element == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Sharpness</label>
+        <select name="sharpness" class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none">
+            <option value="">Any</option>
+            {% for value in sharpness_choices %}
+            <option value="{{ value }}" {% if filters.sharpness == value %}selected{% endif %}>{{ value|capfirst }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Min slots</label>
+        <select name="slots" class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none">
+            <option value="">Any</option>
+            {% for n in "123" %}
+            <option value="{{ n }}" {% if filters.slots == n %}selected{% endif %}>{{ n }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Min attack</label>
+        <input
+            type="number"
+            name="min_attack"
+            value="{{ filters.min_attack|default:'' }}"
+            placeholder="0"
+            class="mt-1 w-24 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+        />
+    </div>
+
+    <div>
+        <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Sort</label>
+        <select name="sort" class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none">
+            <option value="name">Name</option>
+            <option value="attack" {% if filters.sort == 'attack' %}selected{% endif %}>Attack (desc)</option>
+            <option value="affinity" {% if filters.sort == 'affinity' %}selected{% endif %}>Affinity (desc)</option>
+            <option value="rarity" {% if filters.sort == 'rarity' %}selected{% endif %}>Rarity (desc)</option>
+        </select>
+    </div>
+
+    <button type="submit" class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400">
+        Filter
+    </button>
+    <a href="{% url 'core:weapon_list' %}" class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-amber-500">Clear</a>
+</form>

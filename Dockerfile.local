@@ -1,0 +1,21 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+# psycopg2-binary ya trae libpq embebida: no hacen falta build deps.
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Tailwind CLI standalone (v3.x, compatible con tailwind.config.js + directivas @tailwind).
+# Descargamos el binario para poder compilar CSS dentro del contenedor web.
+ARG TAILWIND_VERSION=v3.4.17
+RUN python -c "import urllib.request; urllib.request.urlretrieve('https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64', '/usr/local/bin/tailwindcss')" \
+ && chmod +x /usr/local/bin/tailwindcss
+
+COPY . .
+
+EXPOSE 8000

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}Monsters · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <header>
+        <h1 class="text-3xl font-extrabold tracking-tight text-amber-400">Bestiary</h1>
+        <p class="mt-1 text-slate-400">Real-time search and filters by elemental or status weakness.</p>
+    </header>
+
+    <form
+        class="flex flex-wrap items-end gap-3 rounded-xl border border-slate-800 bg-slate-900 p-4"
+    >
+        <div class="w-full sm:w-72">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Search</label>
+            <input
+                type="search"
+                name="q"
+                value="{{ filters.q|default:'' }}"
+                placeholder="Name or species..."
+                hx-get="{% url 'core:monster_list' %}"
+                hx-trigger="input changed delay:300ms, search"
+                hx-target="#monster-results"
+                hx-swap="innerHTML"
+                hx-include="closest form"
+                hx-push-url="true"
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+            />
+        </div>
+
+        <div>
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Weakness</label>
+            <select
+                name="weakness"
+                hx-get="{% url 'core:monster_list' %}"
+                hx-target="#monster-results"
+                hx-swap="innerHTML"
+                hx-include="closest form"
+                hx-push-url="true"
+                class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+            >
+                <option value="">Any</option>
+                {% for value, label in weakness_choices %}
+                <option value="{{ value }}" {% if filters.weakness == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Type</label>
+            <select
+                name="type"
+                hx-get="{% url 'core:monster_list' %}"
+                hx-target="#monster-results"
+                hx-swap="innerHTML"
+                hx-include="closest form"
+                hx-push-url="true"
+                class="mt-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+            >
+                <option value="">All</option>
+                <option value="large" {% if filters.type == 'large' %}selected{% endif %}>Large</option>
+                <option value="small" {% if filters.type == 'small' %}selected{% endif %}>Small</option>
+            </select>
+        </div>
+
+        <button type="submit" class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400">Filter</button>
+        <a href="{% url 'core:monster_list' %}" class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-amber-500">Clear</a>
+    </form>
+
+    <div id="monster-results">
+        {% include "core/partials/monster_list.html" %}
+    </div>
+</div>
+{% endblock %}

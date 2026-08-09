@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}Weapons · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <header class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-amber-400">Weapons</h1>
+            <p class="mt-1 text-slate-400">
+                Filter by type, element, sharpness, slots or damage. All in real time with HTMX.
+            </p>
+        </div>
+    </header>
+
+    {% include "core/partials/weapon_filter_form.html" %}
+
+    <div id="weapon-results" class="htmx-indicator-parent">
+        {% include "core/partials/weapon_list.html" %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+FROM alpine:3.19
+
+ARG TAILWIND_VERSION=v3.4.17
+RUN wget -q "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64" \
+      -O /usr/local/bin/tailwindcss \
+ && chmod +x /usr/local/bin/tailwindcss
+
+WORKDIR /app
+
+CMD ["tailwindcss", "-i", "./src/input.css", "-o", "./static/css/output.css", "--watch"]

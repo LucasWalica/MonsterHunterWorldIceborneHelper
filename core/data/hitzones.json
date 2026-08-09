@@ -1,0 +1,240 @@
+{
+  "Anjanath": [
+    {"part": "Cabeza", "cut": 45, "impact": 55, "shot": 45, "fire": 25, "water": 20, "thunder": 15, "ice": 10, "dragon": 0},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 35, "fire": 25, "water": 20, "thunder": 15, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 38, "impact": 42, "shot": 30, "fire": 20, "water": 15, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 15, "water": 10, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 50, "impact": 40, "shot": 45, "fire": 25, "water": 20, "thunder": 15, "ice": 10, "dragon": 0}
+  ],
+  "Barroth": [
+    {"part": "Cabeza", "cut": 45, "impact": 60, "shot": 45, "fire": 20, "water": 30, "thunder": 15, "ice": 10, "dragon": 0},
+    {"part": "Caparazón", "cut": 35, "impact": 45, "shot": 30, "fire": 15, "water": 20, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 15, "water": 25, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Patas", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 20, "thunder": 5, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 20, "water": 30, "thunder": 10, "ice": 10, "dragon": 0}
+  ],
+  "Bazelgeuse": [
+    {"part": "Cabeza", "cut": 60, "impact": 55, "shot": 55, "fire": 10, "water": 30, "thunder": 15, "ice": 15, "dragon": 0},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 10, "water": 20, "thunder": 10, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 40, "impact": 42, "shot": 35, "fire": 10, "water": 20, "thunder": 10, "ice": 10, "dragon": 0},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 15, "water": 25, "thunder": 10, "ice": 10, "dragon": 0},
+    {"part": "Patas", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 15, "thunder": 5, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 25, "thunder": 10, "ice": 10, "dragon": 0}
+  ],
+  "Behemoth": [
+    {"part": "Cabeza", "cut": 70, "impact": 60, "shot": 45, "fire": 25, "water": 15, "thunder": 30, "ice": 20, "dragon": 30},
+    {"part": "Cuello", "cut": 45, "impact": 40, "shot": 30, "fire": 20, "water": 10, "thunder": 25, "ice": 15, "dragon": 20},
+    {"part": "Torso", "cut": 40, "impact": 38, "shot": 25, "fire": 15, "water": 10, "thunder": 20, "ice": 10, "dragon": 15},
+    {"part": "Patas", "cut": 35, "impact": 35, "shot": 20, "fire": 15, "water": 10, "thunder": 20, "ice": 10, "dragon": 15},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 30, "fire": 20, "water": 10, "thunder": 25, "ice": 15, "dragon": 20}
+  ],
+  "Deviljho": [
+    {"part": "Cabeza", "cut": 60, "impact": 70, "shot": 60, "fire": 20, "water": 25, "thunder": 10, "ice": 15, "dragon": 30},
+    {"part": "Cuello", "cut": 50, "impact": 55, "shot": 45, "fire": 15, "water": 20, "thunder": 10, "ice": 10, "dragon": 25},
+    {"part": "Torso", "cut": 45, "impact": 50, "shot": 40, "fire": 15, "water": 15, "thunder": 5, "ice": 10, "dragon": 20},
+    {"part": "Patas", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 15, "thunder": 5, "ice": 5, "dragon": 15},
+    {"part": "Cola", "cut": 40, "impact": 35, "shot": 35, "fire": 10, "water": 15, "thunder": 5, "ice": 5, "dragon": 20}
+  ],
+  "Diablos": [
+    {"part": "Cabeza", "cut": 45, "impact": 55, "shot": 40, "fire": 15, "water": 10, "thunder": 30, "ice": 15, "dragon": 20},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 35, "fire": 15, "water": 10, "thunder": 25, "ice": 10, "dragon": 15},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 5, "thunder": 20, "ice": 10, "dragon": 10},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 5, "thunder": 20, "ice": 10, "dragon": 15},
+    {"part": "Patas", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 5, "thunder": 20, "ice": 10, "dragon": 10},
+    {"part": "Cola", "cut": 50, "impact": 40, "shot": 45, "fire": 15, "water": 10, "thunder": 30, "ice": 15, "dragon": 20}
+  ],
+  "Dodogama": [
+    {"part": "Cabeza", "cut": 45, "impact": 55, "shot": 45, "fire": 15, "water": 20, "thunder": 30, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 15, "thunder": 20, "ice": 5, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 15, "thunder": 20, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 40, "impact": 35, "shot": 35, "fire": 15, "water": 20, "thunder": 25, "ice": 10, "dragon": 0}
+  ],
+  "Great Girros": [
+    {"part": "Cabeza", "cut": 55, "impact": 60, "shot": 45, "fire": 20, "water": 15, "thunder": 15, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 15, "water": 10, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 10, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 15, "water": 10, "thunder": 10, "ice": 5, "dragon": 0}
+  ],
+  "Great Jagras": [
+    {"part": "Cabeza", "cut": 50, "impact": 60, "shot": 45, "fire": 20, "water": 15, "thunder": 20, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 15, "water": 10, "thunder": 15, "ice": 5, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 10, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 35, "impact": 30, "shot": 30, "fire": 10, "water": 10, "thunder": 10, "ice": 5, "dragon": 0}
+  ],
+  "Jyuratodus": [
+    {"part": "Cabeza", "cut": 45, "impact": 55, "shot": 45, "fire": 30, "water": 0, "thunder": 25, "ice": 15, "dragon": 0},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 25, "water": 0, "thunder": 20, "ice": 10, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 20, "water": 0, "thunder": 15, "ice": 10, "dragon": 0},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 25, "water": 0, "thunder": 20, "ice": 10, "dragon": 0}
+  ],
+  "Kirin": [
+    {"part": "Cabeza", "cut": 60, "impact": 55, "shot": 50, "fire": 15, "water": 10, "thunder": 0, "ice": 20, "dragon": 20},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 5, "thunder": 0, "ice": 15, "dragon": 15},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 5, "thunder": 0, "ice": 15, "dragon": 15},
+    {"part": "Cola", "cut": 30, "impact": 25, "shot": 25, "fire": 10, "water": 5, "thunder": 0, "ice": 15, "dragon": 15}
+  ],
+  "Kulu-Ya-Ku": [
+    {"part": "Cabeza", "cut": 55, "impact": 60, "shot": 50, "fire": 15, "water": 20, "thunder": 10, "ice": 20, "dragon": 0},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 10, "water": 15, "thunder": 5, "ice": 15, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 15, "thunder": 5, "ice": 10, "dragon": 0},
+    {"part": "Cola", "cut": 35, "impact": 30, "shot": 30, "fire": 10, "water": 15, "thunder": 5, "ice": 10, "dragon": 0}
+  ],
+  "Kushala Daora": [
+    {"part": "Cabeza", "cut": 55, "impact": 50, "shot": 45, "fire": 15, "water": 10, "thunder": 20, "ice": 25, "dragon": 30},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 10, "water": 5, "thunder": 15, "ice": 20, "dragon": 25},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 5, "thunder": 15, "ice": 15, "dragon": 20},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 5, "thunder": 15, "ice": 20, "dragon": 25},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 5, "water": 5, "thunder": 10, "ice": 15, "dragon": 15},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 5, "thunder": 15, "ice": 20, "dragon": 25}
+  ],
+  "Legiana": [
+    {"part": "Cabeza", "cut": 45, "impact": 40, "shot": 40, "fire": 15, "water": 10, "thunder": 20, "ice": 0, "dragon": 10},
+    {"part": "Cuello", "cut": 40, "impact": 40, "shot": 35, "fire": 10, "water": 10, "thunder": 15, "ice": 0, "dragon": 5},
+    {"part": "Torso", "cut": 35, "impact": 38, "shot": 30, "fire": 10, "water": 5, "thunder": 15, "ice": 0, "dragon": 5},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 5, "thunder": 15, "ice": 0, "dragon": 10},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 5, "thunder": 10, "ice": 0, "dragon": 5},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 5, "thunder": 15, "ice": 0, "dragon": 10}
+  ],
+  "Lunastra": [
+    {"part": "Cabeza", "cut": 60, "impact": 55, "shot": 50, "fire": 0, "water": 30, "thunder": 15, "ice": 25, "dragon": 20},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 0, "water": 20, "thunder": 10, "ice": 20, "dragon": 15},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 0, "water": 20, "thunder": 10, "ice": 15, "dragon": 10},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 0, "water": 25, "thunder": 10, "ice": 20, "dragon": 15},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 0, "water": 15, "thunder": 5, "ice": 15, "dragon": 10},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 0, "water": 25, "thunder": 10, "ice": 20, "dragon": 15}
+  ],
+  "Namielle": [
+    {"part": "Cabeza", "cut": 65, "impact": 70, "shot": 55, "fire": 25, "water": 0, "thunder": 15, "ice": 20, "dragon": 10},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 0, "thunder": 10, "ice": 15, "dragon": 5},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 0, "thunder": 5, "ice": 10, "dragon": 5},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 0, "thunder": 5, "ice": 15, "dragon": 5},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 0, "thunder": 5, "ice": 10, "dragon": 5},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 15, "water": 0, "thunder": 5, "ice": 15, "dragon": 5}
+  ],
+  "Nergigante": [
+    {"part": "Cabeza", "cut": 65, "impact": 55, "shot": 50, "fire": 25, "water": 20, "thunder": 10, "ice": 15, "dragon": 30},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 15, "thunder": 10, "ice": 10, "dragon": 25},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 15, "water": 10, "thunder": 5, "ice": 10, "dragon": 20},
+    {"part": "Alas", "cut": 50, "impact": 40, "shot": 45, "fire": 15, "water": 10, "thunder": 5, "ice": 10, "dragon": 25},
+    {"part": "Patas", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 10, "thunder": 5, "ice": 5, "dragon": 20},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 15, "water": 10, "thunder": 5, "ice": 10, "dragon": 25}
+  ],
+  "Odogaron": [
+    {"part": "Cabeza", "cut": 50, "impact": 45, "shot": 45, "fire": 15, "water": 20, "thunder": 10, "ice": 20, "dragon": 0},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 15, "thunder": 10, "ice": 15, "dragon": 0},
+    {"part": "Torso", "cut": 35, "impact": 38, "shot": 30, "fire": 10, "water": 15, "thunder": 5, "ice": 15, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 10, "thunder": 5, "ice": 10, "dragon": 0},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 15, "thunder": 5, "ice": 15, "dragon": 0}
+  ],
+  "Paolumu": [
+    {"part": "Cabeza", "cut": 45, "impact": 50, "shot": 40, "fire": 25, "water": 15, "thunder": 10, "ice": 20, "dragon": 0},
+    {"part": "Cuello", "cut": 40, "impact": 40, "shot": 35, "fire": 20, "water": 10, "thunder": 10, "ice": 15, "dragon": 0},
+    {"part": "Torso", "cut": 30, "impact": 35, "shot": 25, "fire": 15, "water": 10, "thunder": 5, "ice": 15, "dragon": 0},
+    {"part": "Alas", "cut": 35, "impact": 25, "shot": 30, "fire": 15, "water": 10, "thunder": 5, "ice": 10, "dragon": 0},
+    {"part": "Cola", "cut": 35, "impact": 30, "shot": 30, "fire": 15, "water": 10, "thunder": 5, "ice": 10, "dragon": 0}
+  ],
+  "Pukei-Pukei": [
+    {"part": "Cabeza", "cut": 45, "impact": 50, "shot": 40, "fire": 20, "water": 15, "thunder": 25, "ice": 10, "dragon": 0},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 10, "thunder": 20, "ice": 5, "dragon": 0},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 10, "thunder": 15, "ice": 5, "dragon": 0},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 10, "thunder": 15, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 10, "thunder": 15, "ice": 5, "dragon": 0}
+  ],
+  "Rajang": [
+    {"part": "Cabeza", "cut": 45, "impact": 60, "shot": 45, "fire": 20, "water": 10, "thunder": 0, "ice": 30, "dragon": 15},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 15, "water": 10, "thunder": 0, "ice": 20, "dragon": 10},
+    {"part": "Brazos", "cut": 30, "impact": 45, "shot": 25, "fire": 10, "water": 5, "thunder": 0, "ice": 15, "dragon": 5},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 5, "thunder": 0, "ice": 15, "dragon": 5},
+    {"part": "Cola", "cut": 35, "impact": 30, "shot": 30, "fire": 10, "water": 5, "thunder": 0, "ice": 15, "dragon": 5}
+  ],
+  "Rathalos": [
+    {"part": "Cabeza", "cut": 50, "impact": 55, "shot": 45, "fire": 20, "water": 30, "thunder": 15, "ice": 25, "dragon": 10},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 25, "thunder": 10, "ice": 20, "dragon": 5},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 5},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 10},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 15, "thunder": 5, "ice": 10, "dragon": 5},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 10}
+  ],
+  "Azure Rathalos": [
+    {"part": "Cabeza", "cut": 55, "impact": 55, "shot": 50, "fire": 15, "water": 30, "thunder": 10, "ice": 25, "dragon": 15},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 10, "water": 25, "thunder": 10, "ice": 20, "dragon": 10},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 20, "thunder": 5, "ice": 15, "dragon": 5},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 25, "thunder": 10, "ice": 15, "dragon": 10},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 5, "water": 15, "thunder": 5, "ice": 10, "dragon": 5},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 10}
+  ],
+  "Rathian": [
+    {"part": "Cabeza", "cut": 50, "impact": 55, "shot": 45, "fire": 15, "water": 30, "thunder": 20, "ice": 20, "dragon": 10},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 25, "thunder": 15, "ice": 15, "dragon": 5},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 5},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 10},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 15, "thunder": 10, "ice": 10, "dragon": 5},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 10}
+  ],
+  "Pink Rathian": [
+    {"part": "Cabeza", "cut": 55, "impact": 55, "shot": 50, "fire": 15, "water": 30, "thunder": 15, "ice": 20, "dragon": 10},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 10, "water": 25, "thunder": 15, "ice": 15, "dragon": 5},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 20, "thunder": 10, "ice": 15, "dragon": 5},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 25, "thunder": 15, "ice": 15, "dragon": 10},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 5, "water": 15, "thunder": 10, "ice": 10, "dragon": 5},
+    {"part": "Cola", "cut": 45, "impact": 35, "shot": 40, "fire": 10, "water": 25, "thunder": 15, "ice": 15, "dragon": 10}
+  ],
+  "Teostra": [
+    {"part": "Cabeza", "cut": 60, "impact": 55, "shot": 50, "fire": 0, "water": 30, "thunder": 15, "ice": 25, "dragon": 20},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 0, "water": 20, "thunder": 10, "ice": 20, "dragon": 15},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 0, "water": 20, "thunder": 10, "ice": 15, "dragon": 10},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 0, "water": 25, "thunder": 10, "ice": 20, "dragon": 15},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 0, "water": 15, "thunder": 5, "ice": 15, "dragon": 10},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 0, "water": 25, "thunder": 10, "ice": 20, "dragon": 15}
+  ],
+  "Tobi-Kadachi": [
+    {"part": "Cabeza", "cut": 50, "impact": 45, "shot": 45, "fire": 20, "water": 15, "thunder": 0, "ice": 15, "dragon": 10},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 10, "thunder": 0, "ice": 10, "dragon": 5},
+    {"part": "Torso", "cut": 35, "impact": 38, "shot": 30, "fire": 10, "water": 10, "thunder": 0, "ice": 10, "dragon": 5},
+    {"part": "Alas", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 10, "thunder": 0, "ice": 10, "dragon": 5},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 10, "thunder": 0, "ice": 10, "dragon": 5},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 15, "water": 10, "thunder": 0, "ice": 10, "dragon": 5}
+  ],
+  "Tzitzi-Ya-Ku": [
+    {"part": "Cabeza", "cut": 45, "impact": 55, "shot": 45, "fire": 20, "water": 15, "thunder": 30, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 15, "water": 10, "thunder": 20, "ice": 5, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 10, "thunder": 15, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 10, "thunder": 20, "ice": 5, "dragon": 0}
+  ],
+  "Uragaan": [
+    {"part": "Cabeza", "cut": 35, "impact": 55, "shot": 35, "fire": 10, "water": 20, "thunder": 25, "ice": 10, "dragon": 20},
+    {"part": "Caparazón", "cut": 25, "impact": 35, "shot": 20, "fire": 5, "water": 15, "thunder": 15, "ice": 5, "dragon": 10},
+    {"part": "Torso", "cut": 30, "impact": 40, "shot": 25, "fire": 10, "water": 15, "thunder": 20, "ice": 10, "dragon": 15},
+    {"part": "Patas", "cut": 25, "impact": 35, "shot": 20, "fire": 5, "water": 15, "thunder": 15, "ice": 5, "dragon": 10},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 20, "thunder": 25, "ice": 10, "dragon": 20}
+  ],
+  "Vaal Hazak": [
+    {"part": "Cabeza", "cut": 55, "impact": 50, "shot": 50, "fire": 25, "water": 10, "thunder": 20, "ice": 15, "dragon": 0},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 20, "water": 10, "thunder": 15, "ice": 10, "dragon": 0},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 15, "water": 5, "thunder": 10, "ice": 10, "dragon": 0},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 15, "water": 5, "thunder": 10, "ice": 10, "dragon": 0},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 5, "thunder": 10, "ice": 5, "dragon": 0},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 15, "water": 5, "thunder": 10, "ice": 10, "dragon": 0}
+  ],
+  "Xeno'jiiva": [
+    {"part": "Cabeza", "cut": 60, "impact": 55, "shot": 55, "fire": 25, "water": 30, "thunder": 30, "ice": 30, "dragon": 25},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 20, "water": 25, "thunder": 25, "ice": 25, "dragon": 20},
+    {"part": "Torso", "cut": 40, "impact": 45, "shot": 35, "fire": 15, "water": 20, "thunder": 20, "ice": 20, "dragon": 15},
+    {"part": "Alas", "cut": 45, "impact": 35, "shot": 40, "fire": 15, "water": 20, "thunder": 20, "ice": 20, "dragon": 15},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 15, "thunder": 15, "ice": 15, "dragon": 10},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 15, "water": 20, "thunder": 20, "ice": 20, "dragon": 15}
+  ],
+  "Zinogre": [
+    {"part": "Cabeza", "cut": 55, "impact": 50, "shot": 45, "fire": 20, "water": 15, "thunder": 0, "ice": 15, "dragon": 25},
+    {"part": "Cuello", "cut": 45, "impact": 45, "shot": 40, "fire": 15, "water": 10, "thunder": 0, "ice": 10, "dragon": 20},
+    {"part": "Torso", "cut": 35, "impact": 40, "shot": 30, "fire": 10, "water": 10, "thunder": 0, "ice": 10, "dragon": 15},
+    {"part": "Patas", "cut": 30, "impact": 35, "shot": 25, "fire": 10, "water": 5, "thunder": 0, "ice": 5, "dragon": 15},
+    {"part": "Cola", "cut": 40, "impact": 30, "shot": 35, "fire": 10, "water": 5, "thunder": 0, "ice": 10, "dragon": 20}
+  ],
+  "Zorah Magdaros": [
+    {"part": "Cabeza", "cut": 25, "impact": 35, "shot": 25, "fire": 0, "water": 15, "thunder": 10, "ice": 15, "dragon": 5},
+    {"part": "Caparazón", "cut": 15, "impact": 25, "shot": 15, "fire": 0, "water": 10, "thunder": 5, "ice": 10, "dragon": 5},
+    {"part": "Magma Core", "cut": 45, "impact": 45, "shot": 40, "fire": 0, "water": 25, "thunder": 20, "ice": 25, "dragon": 10},
+    {"part": "Patas", "cut": 20, "impact": 30, "shot": 20, "fire": 0, "water": 10, "thunder": 5, "ice": 10, "dragon": 5}
+  ]
+}

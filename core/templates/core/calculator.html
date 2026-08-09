@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}EFR Calculator · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <header>
+        <h1 class="text-3xl font-extrabold tracking-tight text-amber-400">Effective Damage (EFR) Calculator</h1>
+        <p class="mt-1 text-slate-400">
+            Pick a weapon, sharpness, affinity and skills. The result updates in real time with HTMX.
+        </p>
+    </header>
+
+    <form
+        hx-get="{% url 'core:efr_calculator' %}"
+        hx-target="#efr-result"
+        hx-swap="innerHTML"
+        class="space-y-4"
+    >
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Weapon</label>
+            <div id="weapon-search-wrapper" class="relative mt-1">
+                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </span>
+                <input
+                    type="text"
+                    id="weapon-search"
+                    name="q"
+                    placeholder="Search weapon… (e.g. Nergigante, Buster)"
+                    autocomplete="off"
+                    hx-get="{% url 'core:weapon_search' %}"
+                    hx-trigger="input changed delay:250ms, search"
+                    hx-target="#weapon-suggestions"
+                    hx-swap="innerHTML"
+                    hx-include="this"
+                    oninput="filterWeaponOptions(this.value)"
+                    onkeydown="handleWeaponSearchKeydown(event)"
+                    class="w-full rounded-lg border border-slate-700 bg-slate-800 py-2 pl-9 pr-9 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                />
+                <button
+                    type="button"
+                    onclick="clearWeaponSearch()"
+                    title="Clear search"
+                    class="absolute inset-y-0 right-2 my-auto flex h-6 w-6 items-center justify-center rounded text-slate-500 hover:text-slate-200"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <div id="weapon-suggestions" class="absolute left-0 right-0 top-full z-20 mt-1"></div>
+            </div>
+            <select
+                id="weapon-select"
+                name="weapon"
+                hx-get="{% url 'core:efr_calculator' %}"
+                hx-trigger="change"
+                hx-target="#efr-result"
+                hx-swap="innerHTML"
+                hx-include="closest form"
+                hx-push-url="true"
+                class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+            >
+                <option value="">-- Select a weapon --</option>
+                {% for type_key, weapons in weapons_by_type.items %}
+                <optgroup label="{{ weapon_types|get_item:type_key }}">
+                    {% for w in weapons %}
+                    <option value="{{ w.pk }}" {% if weapon.pk == w.pk %}selected{% endif %}>
+                        {{ w.name }} ({{ w.attack_display }})
+                    </option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+            </select>
+            <p id="weapon-search-empty" class="mt-2 hidden text-sm text-slate-500">No results for that search.</p>
+        </div>
+
+        <div id="efr-result">
+            {% include "core/partials/efr_result.html" %}
+        </div>
+    </form>
+</div>
+
+<script>
+    function filterWeaponOptions(query) {
+        const select = document.getElementById('weapon-select');
+        const emptyMsg = document.getElementById('weapon-search-empty');
+        const q = query.trim().toLowerCase();
+        let visible = 0;
+
+        select.querySelectorAll('optgroup').forEach(group => {
+            let groupVisible = false;
+            group.querySelectorAll('option').forEach(opt => {
+                const matches = !q || opt.textContent.toLowerCase().includes(q);
+                opt.hidden = !(matches || opt.selected);
+                if (!opt.hidden) {
+                    groupVisible = true;
+                    visible += 1;
+                }
+            });
+            group.hidden = !groupVisible;
+        });
+
+        emptyMsg.classList.toggle('hidden', visible > 0 || q === '');
+    }
+
+    function closeWeaponSuggestions() {
+        const container = document.getElementById('weapon-suggestions');
+        if (container) container.innerHTML = '';
+    }
+
+    function handleWeaponSearchKeydown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const first = document.querySelector('#weapon-suggestions button');
+            if (first) selectWeaponSuggestion(first);
+        } else if (event.key === 'Escape') {
+            closeWeaponSuggestions();
+        }
+    }
+
+    function selectWeaponSuggestion(btn) {
+        const select = document.getElementById('weapon-select');
+        const input = document.getElementById('weapon-search');
+        const pk = btn.dataset.pk;
+        const name = btn.dataset.name;
+
+        select.value = pk;
+        input.value = name;
+        closeWeaponSuggestions();
+        filterWeaponOptions(name);
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function clearWeaponSearch() {
+        const input = document.getElementById('weapon-search');
+        input.value = '';
+        filterWeaponOptions('');
+        closeWeaponSuggestions();
+        input.focus();
+    }
+
+    document.addEventListener('click', event => {
+        const wrapper = document.getElementById('weapon-search-wrapper');
+        if (wrapper && !wrapper.contains(event.target)) closeWeaponSuggestions();
+    });
+</script>
+{% endblock %}

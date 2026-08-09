@@ -1,0 +1,141 @@
+{% load mhw_extras %}
+<form
+    hx-get="{% url 'core:set_builder' %}"
+    hx-target="#set-builder-content"
+    hx-swap="outerHTML"
+    hx-trigger="change"
+    hx-include="this"
+    class="grid gap-6 lg:grid-cols-3"
+>
+    <div class="lg:col-span-2">
+        <h2 class="text-xl font-bold text-amber-400">Armor pieces</h2>
+        <div class="mt-3 grid gap-3 sm:grid-cols-5">
+            {% for slot, armors in armor_by_slot.items %}
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ slot|capfirst }}</label>
+                <select name="{{ slot }}" class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-xs text-slate-100 focus:border-amber-500 focus:outline-none">
+                    <option value="">--</option>
+                    {% regroup armors by rank as rank_groups %}
+                    {% for group in rank_groups %}
+                    <optgroup label="{{ group.grouper|capfirst }} rank">
+                        {% for armor in group.list %}
+                        <option value="{{ armor.pk }}" {% if selected|get_item:slot == armor.pk %}selected{% endif %}>
+                            {{ armor.name }} ({{ armor.defense_max }})
+                        </option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+
+                {% with piece=piece_by_slot|get_item:slot %}
+                {% if piece and piece.slots %}
+                <div class="mt-2 space-y-2">
+                    {% for slot_size in piece.slots %}
+                    {% with idx=forloop.counter0|stringformat:"s" %}
+                    {% with deco_key=slot|add:"-"|add:idx %}
+                    <div>
+                        <div class="mb-1 flex items-center justify-between">
+                            <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Jewel slot</label>
+                            <span class="rounded bg-slate-700 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">[{{ slot_size }}]</span>
+                        </div>
+                        <select id="deco-select-{{ deco_key }}" name="deco{{ deco_key }}" class="hidden" aria-hidden="true">
+                            <option value="">--</option>
+                            {% for deco in decorations %}
+                            {% if deco.slot <= slot_size %}
+                            {% with current=deco_selected|get_item:deco_key %}
+                            <option value="{{ deco.pk }}" {% if current.pk == deco.pk %}selected{% endif %}>{{ deco.name }}</option>
+                            {% endwith %}
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="relative">
+                            <input
+                                type="text"
+                                id="deco-search-{{ deco_key }}"
+                                name="q"
+                                placeholder="Search jewel…"
+                                autocomplete="off"
+                                hx-get="{% url 'core:decoration_search' %}"
+                                hx-trigger="input changed delay:250ms, search, focus"
+                                hx-target="#deco-suggestions-{{ deco_key }}"
+                                hx-swap="innerHTML"
+                                hx-include="this"
+                                hx-vals='{"max_slot": {{ slot_size }}, "slot": "{{ deco_key }}"}'
+                                onkeydown="handleDecoSearchKeydown(event, '{{ deco_key }}')"
+                                value="{% with sd=deco_selected|get_item:deco_key %}{% if sd %}{{ sd.name }}{% endif %}{% endwith %}"
+                                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                            />
+                            <div id="deco-suggestions-{{ deco_key }}" class="absolute left-0 right-0 top-full z-20 mt-1"></div>
+                        </div>
+                        <p class="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                            Fits: size {{ slot_size }}
+                        </p>
+                    </div>
+                    {% endwith %}
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="mt-2 rounded-lg border border-slate-800 bg-slate-800/30 px-2 py-1.5 text-[10px] text-slate-600">No slots</p>
+                {% endif %}
+                {% endwith %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Charm</label>
+            <select id="charm-select" name="charm" class="hidden" aria-hidden="true">
+                <option value="">--</option>
+                {% for charm in charms %}
+                <option value="{{ charm.pk }}" {% if charm_selected.pk == charm.pk %}selected{% endif %}>{{ charm.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="relative mt-1">
+                <input
+                    type="text"
+                    id="charm-search"
+                    name="q"
+                    placeholder="Search charm… (e.g. Attack, Expert)"
+                    autocomplete="off"
+                    hx-get="{% url 'core:charm_search' %}"
+                    hx-trigger="input changed delay:250ms, search"
+                    hx-target="#charm-suggestions"
+                    hx-swap="innerHTML"
+                    hx-include="this"
+                    onkeydown="handleCharmSearchKeydown(event)"
+                    value="{% if charm_selected %}{{ charm_selected.name }}{% endif %}"
+                    class="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                />
+                <div id="charm-suggestions" class="absolute left-0 right-0 top-full z-20 mt-1"></div>
+            </div>
+            {% if charm_selected %}
+            <ul class="mt-2 space-y-1">
+                {% for charm_skill in charm_selected.charm_skills.all %}
+                <li class="text-xs text-slate-300">{{ charm_skill.skill.name }} <span class="text-amber-400">Lv{{ charm_skill.level }}</span></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <h2 class="mt-4 text-xl font-bold text-amber-400">Total skills</h2>
+        <p class="mt-1 text-xs text-slate-500">
+            Defense: <span class="font-semibold text-slate-200">{{ total_defense }}</span>
+            · Slots: <span class="font-semibold text-slate-200">{{ total_slots }}</span>
+        </p>
+        {% if totals %}
+        <ul class="mt-3 space-y-1.5">
+            {% for name, level in totals %}
+            <li class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-800/40 px-3 py-2 text-sm">
+                <span class="text-slate-200">{{ name }}</span>
+                <span class="rounded bg-amber-500/20 px-2 py-0.5 text-xs font-bold text-amber-400">Lv{{ level }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mt-3 text-sm text-slate-500">No active skills.</p>
+        {% endif %}
+    </div>
+</form>

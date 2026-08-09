@@ -1,0 +1,26 @@
+{% if charms %}
+<ul class="max-h-72 divide-y divide-slate-800 overflow-y-auto rounded-lg border border-slate-700 bg-slate-800 shadow-xl">
+    {% for charm in charms %}
+    <li>
+        <button
+            type="button"
+            data-pk="{{ charm.pk }}"
+            data-name="{{ charm.name }}"
+            onclick="selectCharm(this)"
+            class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-slate-700"
+        >
+            <span>
+                <span class="text-slate-100">{{ charm.name }}</span>
+                {% for cs in charm.charm_skills.all %}
+                <span class="ml-2 text-xs text-amber-400">{{ cs.skill.name }} Lv{{ cs.level }}</span>
+                {% endfor %}
+            </span>
+        </button>
+    </li>
+    {% endfor %}
+</ul>
+{% elif q %}
+<div class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-400 shadow-xl">
+    No matches for "{{ q }}".
+</div>
+{% endif %}
