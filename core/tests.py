@@ -226,9 +226,10 @@ class ViewTests(TestCase):
             reverse("core:set_builder"), {"head": armor.pk}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Fits: size 2")
+        self.assertContains(response, "deco-pip-head-0")
+        self.assertContains(response, "[2]")
 
-    def test_set_builder_renders_one_jewel_search_per_slot(self):
+    def test_set_builder_renders_one_jewel_pip_per_slot(self):
         armor = Armor.objects.create(
             game_id=7001,
             name="Slotty Helm",
@@ -240,11 +241,11 @@ class ViewTests(TestCase):
             reverse("core:set_builder"), {"head": armor.pk}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "deco-search-head-0")
-        self.assertContains(response, "deco-search-head-1")
-        self.assertContains(response, "Fits: size 4")
-        self.assertContains(response, "Fits: size 1")
-        self.assertNotContains(response, "deco-search-chest")
+        self.assertContains(response, "deco-pip-head-0")
+        self.assertContains(response, "deco-pip-head-1")
+        self.assertContains(response, "openJewelModal('head-0', 4)")
+        self.assertContains(response, "openJewelModal('head-1', 1)")
+        self.assertNotContains(response, "deco-pip-chest")
 
     def test_set_builder_totals_include_multiple_jewels_per_piece(self):
         armor = Armor.objects.create(
@@ -275,6 +276,30 @@ class ViewTests(TestCase):
         self.assertContains(response, "Attack Boost")
         self.assertContains(response, "Critical Eye")
         self.assertRegex(response.content.decode(), r"Slots:.*?>2</span>")
+
+    def test_armor_picker_returns_pieces(self):
+        Armor.objects.create(
+            game_id=7100,
+            name="Rathalos Helm",
+            type="head",
+            rank="high",
+            defense_max=60,
+            slots=[3, 1],
+        )
+        response = self.client.get(
+            reverse("core:armor_picker"), {"slot": "head"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Rathalos Helm")
+        self.assertContains(response, "60 def")
+
+    def test_armor_picker_respects_slot(self):
+        Armor.objects.create(game_id=7101, name="Leg Piece", type="legs", rank="high")
+        response = self.client.get(
+            reverse("core:armor_picker"), {"slot": "head"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Leg Piece")
 
     def test_charm_search_returns_matches(self):
         Charm.objects.create(game_id=700, name="Attack Charm 1")

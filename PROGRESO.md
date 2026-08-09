@@ -10,7 +10,7 @@ App de referencia de Monster Hunter World: Iceborne (Django + HTMX + Tailwind).
 | Base de datos | Postgres 15 (Docker) · SQLite (dev local) |
 | Frontend | Tailwind CSS v3 · HTMX (parciales dinámicos) |
 | Datos | ETL desde https://mhw-db.com/ (`core/management/commands/etl_mhw_data.py`) |
-| Infra | `docker-compose.yml` (db / web / css) |
+| Infra | `docker-compose.yml` (db / web / css) · `Dockerfile` (producción/Vercel) |
 
 ## Features
 
@@ -26,7 +26,12 @@ App de referencia de Monster Hunter World: Iceborne (Django + HTMX + Tailwind).
 | 8 | Árbol de forja y materiales (arma, armadura, item) | `/weapons/<pk>/` · `/armor/<pk>/` · `/items/<pk>/` | ✅ |
 | 9 | Hitzones corporales (datos de la comunidad) | detalle de monstruo | ✅ |
 | 10 | Web traducida al inglés (templates, choices de modelos, strings de vistas) | toda la app | ✅ |
-| 11 | Tests unitarios (29) | `manage.py test core` | ✅ |
+| 11 | Tests unitarios (33) | `manage.py test core` | ✅ |
+| 12 | **Skills Library** (lista buscable de 181 skills con max_level y descripción) | `/skills/` | ✅ |
+| 13 | **Item & Material Search** (buscador HTMX de 1186 items/materiales) | `/items/search/` | ✅ |
+| 14 | **Drops en monster_detail** (recompensas/carves por monstruo con condiciones) | `/monsters/<pk>/` | ✅ |
+| 15 | **UI mejorada**: nav sticky, footer, loading global, cards hover, tipografía, spacing | toda la app | ✅ |
+| 16 | **Despliegue Vercel** (Dockerfile + guía) | `DEPLOY_VERCEL.md` | ✅ |
 
 ## Estructura
 
@@ -40,7 +45,7 @@ core/
   management/commands/
     etl_mhw_data.py    importa mhw-db
     seed_hitzones.py   siembra hitzones desde core/data/hitzones.json
-  templates/core/  páginas + partials HTMX (incl. weapon/decoration/charm_suggestions)
+  templates/core/  páginas + partials HTMX (incl. weapon/decoration/charm/armor/skill/item partials)
 static/css/        output.css (compilado por Tailwind)
 ```
 
@@ -51,10 +56,14 @@ static/css/        output.css (compilado por Tailwind)
 | `GET /calculator/weapons/search/?q=` | Armas por nombre | top 20 por tipo |
 | `GET /sets/decorations/search/?q=&max_slot=&slot=` | Joyas por nombre | filtra por talla de ranura; `q` vacío ⇒ joyas populares (mayor rareza) |
 | `GET /sets/charms/search/?q=` | Amuletos por nombre | top 20 |
+| `GET /sets/armors/picker/?slot=` | Armaduras por slot | para modal del set builder |
+| `GET /skills/` | Skills (página + partial) | búsqueda + filtro max_level |
+| `GET /items/search/` | Items/materiales (página + partial) | búsqueda por nombre |
 
 ## Cómo ejecutar
 
 ### Docker (Postgres)
+
 ```bash
 docker compose up -d --build          # db + web + css (watch de Tailwind)
 docker compose exec web python manage.py etl_mhw_data
@@ -63,6 +72,7 @@ docker compose exec web python manage.py seed_hitzones
 ```
 
 ### Local (SQLite)
+
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
@@ -73,8 +83,9 @@ python manage.py runserver
 ```
 
 ### Tests
+
 ```bash
-python manage.py test core             # 29 tests (EFR, optimizer, vistas, búsquedas HTMX)
+python manage.py test core             # 33 tests (EFR, optimizer, vistas, búsquedas HTMX)
 ```
 
 > Nota Docker: Django cachea el URLconf por proceso. Tras añadir rutas nuevas
@@ -87,13 +98,22 @@ Joyas 405 · Amuletos 314 rangos (109 amuletos) · Materiales 8400 · Hitzones 1
 
 ## Próximos pasos propuestos
 
-- [ ] Librería de habilidades: lista de Skills con niveles y descripción.
-- [ ] Buscador de items/materiales (reutilizar el patrón de autocomplete HTMX ya existente).
-- [ ] Drops por monstruo: listar recompensas/carves en `monster_detail`
-      (hoy solo se ven desde `item_detail`).
 - [ ] Arma dentro del Set Builder (el arma no influye en el build actual).
 - [ ] Persistencia de sets (guardar/cargar en localStorage o por usuario).
 - [ ] README.md más completo + capturas.
+- [ ] Autenticación de usuario y sets privados.
+
+## Despliegue en Vercel
+
+Ver `DEPLOY_VERCEL.md` para la guía completa.
+
+Resumen rápido:
+
+1. Conecta repo a Vercel → detecta `Dockerfile`
+2. Configura variables de entorno (`DEBUG=0`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS=.vercel.app`, `CSRF_TRUSTED_ORIGINS=https://*.vercel.app`)
+3. Usa PostgreSQL con **pooled connection** (Neon, Supabase, Railway)
+4. `vercel --prod` o push a `main`
+5. Corre migraciones y ETL una vez: `python manage.py migrate && python manage.py etl_mhw_data && python manage.py seed_hitzones`
 
 ## Notas de entorno
 
@@ -105,3 +125,4 @@ Joyas 405 · Amuletos 314 rangos (109 amuletos) · Materiales 8400 · Hitzones 1
   (en dev no requiere `collectstatic`).
 - mhw-db no expone hitzones: se cargan con `seed_hitzones` (datos de la
   comunidad en `core/data/hitzones.json`; cubren 33 grandes monstruos).
+- Para producción en Vercel: usa `DATABASE_URL` con pooling (puerto 6543 en Neon), `DEBUG=0`, y `collectstatic` corre en el build del Dockerfile.

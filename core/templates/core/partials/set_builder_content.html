@@ -1,4 +1,5 @@
 {% load mhw_extras %}
+<div id="set-builder-content">
 <form
     hx-get="{% url 'core:set_builder' %}"
     hx-target="#set-builder-content"
@@ -9,77 +10,92 @@
 >
     <div class="lg:col-span-2">
         <h2 class="text-xl font-bold text-amber-400">Armor pieces</h2>
-        <div class="mt-3 grid gap-3 sm:grid-cols-5">
+        <p class="mt-1 text-xs text-slate-500">
+            Pick a piece for each slot, then click its sockets to equip jewels.
+        </p>
+        <div class="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             {% for slot, armors in armor_by_slot.items %}
-            <div>
+            {% with piece=piece_by_slot|get_item:slot %}
+            <div class="rounded-xl border border-slate-800 bg-slate-900 p-3">
                 <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ slot|capfirst }}</label>
-                <select name="{{ slot }}" class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-xs text-slate-100 focus:border-amber-500 focus:outline-none">
+
+                <select id="armor-select-{{ slot }}" name="{{ slot }}" class="hidden" aria-hidden="true">
                     <option value="">--</option>
                     {% regroup armors by rank as rank_groups %}
                     {% for group in rank_groups %}
                     <optgroup label="{{ group.grouper|capfirst }} rank">
                         {% for armor in group.list %}
-                        <option value="{{ armor.pk }}" {% if selected|get_item:slot == armor.pk %}selected{% endif %}>
-                            {{ armor.name }} ({{ armor.defense_max }})
-                        </option>
+                        <option value="{{ armor.pk }}" {% if selected|get_item:slot == armor.pk %}selected{% endif %}>{{ armor.name }}</option>
                         {% endfor %}
                     </optgroup>
                     {% endfor %}
                 </select>
 
-                {% with piece=piece_by_slot|get_item:slot %}
-                {% if piece and piece.slots %}
-                <div class="mt-2 space-y-2">
+                <button
+                    type="button"
+                    onclick="openArmorPicker('{{ slot }}')"
+                    class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-2 text-left text-xs hover:border-amber-500"
+                >
+                    {% if piece %}
+                    <span class="font-semibold text-slate-100">{{ piece.name }}</span>
+                    <span class="ml-1 text-slate-400">{{ piece.defense_max }} def</span>
+                    {% else %}
+                    <span class="text-slate-500">Choose…</span>
+                    {% endif %}
+                </button>
+
+                {% if piece %}
+                <div class="mt-2 space-y-1.5">
+                    {% for asp in piece.armor_skills.all %}
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="truncate text-slate-300">{{ asp.skill.name }}</span>
+                        <span class="ml-1 shrink-0 rounded bg-amber-500/20 px-1.5 text-[10px] font-bold text-amber-400">Lv{{ asp.level }}</span>
+                    </div>
+                    {% endfor %}
+
                     {% for slot_size in piece.slots %}
                     {% with idx=forloop.counter0|stringformat:"s" %}
                     {% with deco_key=slot|add:"-"|add:idx %}
-                    <div>
-                        <div class="mb-1 flex items-center justify-between">
-                            <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Jewel slot</label>
-                            <span class="rounded bg-slate-700 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">[{{ slot_size }}]</span>
-                        </div>
-                        <select id="deco-select-{{ deco_key }}" name="deco{{ deco_key }}" class="hidden" aria-hidden="true">
-                            <option value="">--</option>
-                            {% for deco in decorations %}
-                            {% if deco.slot <= slot_size %}
-                            {% with current=deco_selected|get_item:deco_key %}
-                            <option value="{{ deco.pk }}" {% if current.pk == deco.pk %}selected{% endif %}>{{ deco.name }}</option>
-                            {% endwith %}
-                            {% endif %}
-                            {% endfor %}
-                        </select>
-                        <div class="relative">
-                            <input
-                                type="text"
-                                id="deco-search-{{ deco_key }}"
-                                name="q"
-                                placeholder="Search jewel…"
-                                autocomplete="off"
-                                hx-get="{% url 'core:decoration_search' %}"
-                                hx-trigger="input changed delay:250ms, search, focus"
-                                hx-target="#deco-suggestions-{{ deco_key }}"
-                                hx-swap="innerHTML"
-                                hx-include="this"
-                                hx-vals='{"max_slot": {{ slot_size }}, "slot": "{{ deco_key }}"}'
-                                onkeydown="handleDecoSearchKeydown(event, '{{ deco_key }}')"
-                                value="{% with sd=deco_selected|get_item:deco_key %}{% if sd %}{{ sd.name }}{% endif %}{% endwith %}"
-                                class="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
-                            />
-                            <div id="deco-suggestions-{{ deco_key }}" class="absolute left-0 right-0 top-full z-20 mt-1"></div>
-                        </div>
-                        <p class="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                            Fits: size {{ slot_size }}
-                        </p>
-                    </div>
+                    {% with sd=deco_selected|get_item:deco_key %}
+                    <select id="deco-select-{{ deco_key }}" name="deco{{ deco_key }}" class="hidden" aria-hidden="true">
+                        <option value="">--</option>
+                        {% for deco in decorations %}
+                        {% if deco.slot <= slot_size %}
+                        {% with current=deco_selected|get_item:deco_key %}
+                        <option value="{{ deco.pk }}" {% if current.pk == deco.pk %}selected{% endif %}>{{ deco.name }}</option>
+                        {% endwith %}
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button
+                        type="button"
+                        id="deco-pip-{{ deco_key }}"
+                        onclick="openJewelModal('{{ deco_key }}', {{ slot_size }})"
+                        class="flex w-full items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-800/60 px-2 py-1.5 text-xs hover:border-amber-500"
+                    >
+                        <span class="flex min-w-0 items-center gap-2">
+                            <span class="shrink-0 rounded bg-slate-700 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">[{{ slot_size }}]</span>
+                            <span class="jewel-name truncate {% if sd %}text-slate-100{% else %}text-slate-500{% endif %}">
+                                {% if sd %}{{ sd.name }}{% else %}Select jewel…{% endif %}
+                            </span>
+                        </span>
+                        {% if sd %}
+                        <span
+                            class="shrink-0 text-slate-500 hover:text-red-400"
+                            onclick="event.stopPropagation(); clearJewel('{{ deco_key }}')"
+                        >✕</span>
+                        {% endif %}
+                    </button>
+                    {% endwith %}
                     {% endwith %}
                     {% endwith %}
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="mt-2 rounded-lg border border-slate-800 bg-slate-800/30 px-2 py-1.5 text-[10px] text-slate-600">No slots</p>
+                <p class="mt-2 text-[10px] text-slate-600">No piece selected.</p>
                 {% endif %}
-                {% endwith %}
             </div>
+            {% endwith %}
             {% endfor %}
         </div>
     </div>
@@ -139,3 +155,4 @@
         {% endif %}
     </div>
 </form>
+</div>

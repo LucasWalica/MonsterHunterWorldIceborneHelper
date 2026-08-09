@@ -21,26 +21,30 @@ def charm_search(request):
 def decoration_search(request):
     """Autocompletado de joyas: coincidencias de nombre que encajen en la ranura.
 
-    Con ``q`` vacío devuelve las joyas más populares (mayor rareza) para esa
-    ranura, de modo que al enfocar el campo el usuario vea sugerencias.
+    Con ``q`` vacío y ``limit`` alto devuelve todas las joyas que caben en la
+    ranura (agrupadas por talla) para el modal del set builder.
     """
     q = request.GET.get("q", "").strip()
     try:
         max_slot = int(request.GET.get("max_slot", 99))
     except (TypeError, ValueError):
         max_slot = 99
+    try:
+        limit = min(max(int(request.GET.get("limit", 20)), 1), 500)
+    except (TypeError, ValueError):
+        limit = 20
 
+    queryset = Decoration.objects.filter(slot__lte=max_slot)
     if q:
         decorations = list(
-            Decoration.objects.filter(name__icontains=q, slot__lte=max_slot)
+            queryset.filter(name__icontains=q)
             .prefetch_related("decoration_skills__skill")
-            .order_by("slot", "name")[:20]
+            .order_by("slot", "name")[:limit]
         )
     else:
         decorations = list(
-            Decoration.objects.filter(slot__lte=max_slot)
-            .prefetch_related("decoration_skills__skill")
-            .order_by("-rarity", "slot", "name")[:10]
+            queryset.prefetch_related("decoration_skills__skill")
+            .order_by("slot", "-rarity", "name")[:limit]
         )
     context = {
         "decorations": decorations,
@@ -48,6 +52,20 @@ def decoration_search(request):
         "slot": request.GET.get("slot", ""),
     }
     return render(request, "core/partials/decoration_suggestions.html", context)
+
+
+def armor_picker(request):
+    """Modal del set builder: lista de armaduras de un slot con sus ranuras."""
+    slot = request.GET.get("slot", "")
+    if slot not in SLOT_ORDER:
+        slot = "head"
+    q = request.GET.get("q", "").strip()
+    armors = Armor.objects.filter(type=slot).prefetch_related("armor_skills__skill")
+    if q:
+        armors = armors.filter(name__icontains=q)
+    armors = armors.order_by("rank", "-defense_max", "name")
+    context = {"slot": slot, "armors": armors, "q": q}
+    return render(request, "core/partials/armor_picker_list.html", context)
 
 
 def _selected_pieces(request):

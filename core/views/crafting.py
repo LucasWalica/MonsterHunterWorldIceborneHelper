@@ -67,3 +67,18 @@ def item_detail(request, pk):
         "core/item_detail.html",
         {"item": item, "rewards": rewards},
     )
+
+
+def item_search(request):
+    """Buscador de items/materiales (HTMX)."""
+    q = request.GET.get("q", "").strip()
+    items = []
+    if q:
+        items = list(
+            Item.objects.filter(name__icontains=q)
+            .order_by("name")[:50]
+        )
+    context = {"items": items, "q": q}
+    if request.htmx:
+        return render(request, "core/partials/item_search_results.html", context)
+    return render(request, "core/item_search.html", context)

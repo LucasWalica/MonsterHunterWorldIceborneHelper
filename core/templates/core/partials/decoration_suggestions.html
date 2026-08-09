@@ -1,15 +1,21 @@
 {% if decorations %}
-<ul class="max-h-72 divide-y divide-slate-800 overflow-y-auto rounded-lg border border-slate-700 bg-slate-800 shadow-xl">
-    {% for deco in decorations %}
-    <li>
+{% with armor_slot=slot %}
+<div class="space-y-2">
+    {% regroup decorations by slot as size_groups %}
+    {% for group in size_groups %}
+    <div>
+        <h4 class="px-2 pb-1 pt-2 text-[10px] font-bold uppercase tracking-widest text-amber-400">
+            Size {{ group.grouper }} slots
+        </h4>
+        {% for deco in group.list %}
         <button
             type="button"
-            data-armor-slot="{{ slot }}"
+            data-armor-slot="{{ armor_slot }}"
             data-pk="{{ deco.pk }}"
             data-name="{{ deco.name }}"
             onclick="selectDeco(this)"
             title="{% for ds in deco.decoration_skills.all %}{{ ds.skill.name }} Lv{{ ds.level }}{% if not forloop.last %} · {% endif %}{% endfor %}"
-            class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-slate-700"
+            class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-700"
         >
             <span>
                 <span class="text-slate-100">{{ deco.name }}</span>
@@ -21,11 +27,13 @@
                 [{{ deco.slot }}]
             </span>
         </button>
-    </li>
+        {% endfor %}
+    </div>
     {% endfor %}
-</ul>
-{% elif q %}
-<div class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-400 shadow-xl">
-    No matches for "{{ q }}".
 </div>
+{% endwith %}
+{% elif q %}
+<div class="px-3 py-4 text-center text-sm text-slate-400">No matches for "{{ q }}".</div>
+{% else %}
+<div class="px-3 py-4 text-center text-sm text-slate-400">No jewels fit this slot.</div>
 {% endif %}

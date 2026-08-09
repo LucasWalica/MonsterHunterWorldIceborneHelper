@@ -16,8 +16,11 @@ urlpatterns = [
     path("calculator/weapons/search/", calculator.weapon_search, name="weapon_search"),
     path("sets/", sets.set_builder, name="set_builder"),
     path("sets/decorations/search/", sets.decoration_search, name="decoration_search"),
+    path("sets/armors/picker/", sets.armor_picker, name="armor_picker"),
     path("sets/charms/search/", sets.charm_search, name="charm_search"),
     path("sets/optimize/", sets.optimize, name="set_optimizer"),
+    path("skills/", monsters.skill_list, name="skill_list"),
+    path("items/search/", crafting.item_search, name="item_search"),
     path("items/<int:pk>/", crafting.item_detail, name="item_detail"),
     path("armor/<int:pk>/", crafting.armor_detail, name="armor_detail"),
 ]

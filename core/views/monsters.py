@@ -6,6 +6,7 @@ from core.models import (
     STATUS_TYPES,
     Monster,
     MonsterWeakness,
+    Skill,
 )
 
 # Elementos + estados usados como filtros de debilidad.
@@ -50,13 +51,20 @@ def monster_list(request):
 
 
 def monster_detail(request, pk):
-    """Detalle: debilidades, resistencias, estados, ubicaciones y hitzones."""
+    """Detalle: debilidades, resistencias, estados, ubicaciones, hitzones y drops."""
     monster = get_object_or_404(
         Monster.objects.prefetch_related(
-            "weaknesses", "resistances", "ailments", "locations", "hitzones"
+            "weaknesses",
+            "resistances",
+            "ailments",
+            "locations",
+            "hitzones",
+            "rewards__item",
         ),
         pk=pk,
     )
+    rewards = list(monster.rewards.select_related("item").order_by("item__name"))
+
     return render(
         request,
         "core/monster_detail.html",
@@ -71,5 +79,32 @@ def monster_detail(request, pk):
                 if w.element in dict(STATUS_TYPES)
             ],
             "element_types": dict(ELEMENT_TYPES),
+            "rewards": rewards,
         },
     )
+
+
+def skill_list(request):
+    """Librería de habilidades: lista con búsqueda y filtro por max_level."""
+    queryset = Skill.objects.all().order_by("name")
+
+    q = request.GET.get("q", "").strip()
+    if q:
+        queryset = queryset.filter(name__icontains=q)
+
+    max_level = request.GET.get("max_level", "")
+    if max_level.isdigit():
+        queryset = queryset.filter(max_level=int(max_level))
+
+    skills = list(queryset)
+
+    context = {
+        "skills": skills,
+        "q": q,
+        "max_level": max_level,
+        "max_level_choices": range(1, 8),
+    }
+
+    if request.htmx:
+        return render(request, "core/partials/skill_list.html", context)
+    return render(request, "core/skills.html", context)

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}Skills Library · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <header>
+        <h1 class="text-3xl font-extrabold tracking-tight text-amber-400">Skills Library</h1>
+        <p class="mt-1 text-slate-400">
+            Browse all skills, their max levels, and search by name.
+        </p>
+    </header>
+
+    <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+        <form
+            hx-get="{% url 'core:skill_list' %}"
+            hx-target="#skills-list"
+            hx-swap="innerHTML"
+            class="flex flex-col sm:flex-row gap-4"
+        >
+            <div class="flex-1">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Search by name</label>
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ q }}"
+                    placeholder="Search skill… (e.g. Attack, Critical, Weakness)"
+                    autocomplete="off"
+                    hx-get="{% url 'core:skill_list' %}"
+                    hx-trigger="input changed delay:250ms"
+                    hx-target="#skills-list"
+                    hx-swap="innerHTML"
+                    hx-include="this"
+                    class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                />
+            </div>
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Max level</label>
+                <select
+                    name="max_level"
+                    value="{{ max_level }}"
+                    hx-get="{% url 'core:skill_list' %}"
+                    hx-trigger="change"
+                    hx-target="#skills-list"
+                    hx-swap="innerHTML"
+                    hx-include="this"
+                    class="mt-1 w-full sm:w-32 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                >
+                    <option value="">All</option>
+                    {% for level in max_level_choices %}
+                    <option value="{{ level }}" {% if max_level == level|stringformat:"s" %}selected{% endif %}>{{ level }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div id="skills-list">
+        {% include "core/partials/skill_list.html" %}
+    </div>
+</div>
+{% endblock %}

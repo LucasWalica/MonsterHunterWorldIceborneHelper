@@ -1,0 +1,35 @@
+{% if armors %}
+<div class="space-y-1.5">
+    {% regroup armors by rank as rank_groups %}
+    {% for group in rank_groups %}
+    <h4 class="px-2 pb-1 pt-2 text-[10px] font-bold uppercase tracking-widest text-amber-400">
+        {{ group.grouper|capfirst }} rank
+    </h4>
+    {% for armor in group.list %}
+    <button
+        type="button"
+        data-slot="{{ slot }}"
+        data-pk="{{ armor.pk }}"
+        data-name="{{ armor.name }}"
+        onclick="selectArmor(this)"
+        class="flex w-full flex-col gap-0.5 rounded-lg border border-slate-800 px-3 py-2 text-left text-sm hover:border-amber-500 hover:bg-slate-800"
+    >
+        <span class="flex items-center justify-between gap-2">
+            <span class="text-slate-100">{{ armor.name }}</span>
+            <span class="shrink-0 text-xs text-slate-400">{{ armor.defense_max }} def</span>
+        </span>
+        <span class="text-xs text-slate-400">
+            {% if armor.slots %}Slots: {% for s in armor.slots %}[{{ s }}]{% if not forloop.last %} {% endif %}{% endfor %}{% else %}No slots{% endif %}
+        </span>
+        {% for asp in armor.armor_skills.all %}
+        <span class="text-xs text-amber-400">{{ asp.skill.name }} Lv{{ asp.level }}</span>
+        {% endfor %}
+    </button>
+    {% endfor %}
+    {% endfor %}
+</div>
+{% elif q %}
+<div class="px-3 py-4 text-center text-sm text-slate-400">No matches for "{{ q }}".</div>
+{% else %}
+<div class="px-3 py-4 text-center text-sm text-slate-400">No pieces found.</div>
+{% endif %}

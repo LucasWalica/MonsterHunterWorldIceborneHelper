@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load mhw_extras %}
+
+{% block title %}Item Search · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <header>
+        <h1 class="text-3xl font-extrabold tracking-tight text-amber-400">Item & Material Search</h1>
+        <p class="mt-1 text-slate-400">
+            Search through all items, materials, and monster parts.
+        </p>
+    </header>
+
+    <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+        <form
+            hx-get="{% url 'core:item_search' %}"
+            hx-target="#item-results"
+            hx-swap="innerHTML"
+        >
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Search items</label>
+            <input
+                type="text"
+                name="q"
+                value="{{ q }}"
+                placeholder="Search item… (e.g. Rathalos, Scale, Gem, Ore)"
+                autocomplete="off"
+                hx-get="{% url 'core:item_search' %}"
+                hx-trigger="input changed delay:250ms"
+                hx-target="#item-results"
+                hx-swap="innerHTML"
+                hx-include="this"
+                class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+            />
+        </form>
+    </div>
+
+    <div id="item-results">
+        {% include "core/partials/item_search_results.html" %}
+    </div>
+</div>
+{% endblock %}
