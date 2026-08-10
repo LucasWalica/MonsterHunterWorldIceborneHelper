@@ -82,17 +82,27 @@ O haz push a la rama principal (`main`/`master`) y Vercel desplegará automátic
 
 ## Migraciones y datos iniciales
 
-La primera vez (o tras cambios de modelo), ejecuta migraciones y ETL:
+Ejecuta migraciones y ETL **desde tu máquina local** usando la URL **no-pooling**
+(puerto 5432 directo) — así no aplica el límite de tiempo de Vercel:
 
 ```bash
-# En local con acceso a la BD de producción (usa DATABASE_URL de Vercel)
-export DATABASE_URL="postgresql://..."
+# Desde la raíz del proyecto (con el venv activado)
+export DATABASE_URL="postgres://user:pass@host:5432/db?sslmode=require"   # URL no-pooling
 python manage.py migrate
-python manage.py etl_mhw_data
-python manage.py seed_hitzones
+python manage.py etl_mhw_data    # por trozos: cada entidad es un trozo reanudable
+python manage.py seed_hitzones   # hitzones de la comunidad (no vienen de la API)
 ```
 
-O crea un **Vercel Cron Job** / GitHub Action para correr esto periódicamente.
+El ETL por trozos es **idempotente y reanudable**: si se corta (por red, por
+límite de tiempo, etc.), basta volver a ejecutarlo:
+
+```bash
+python manage.py etl_mhw_data               # continúa con los trozos pendientes
+python manage.py etl_mhw_data --entity armor  # fuerza un trozo concreto
+python manage.py etl_mhw_data --all           # re-importa todo
+```
+
+Opcional: crea un **Vercel Cron Job** / GitHub Action para refrescar datos periódicamente.
 
 ## Comandos útiles
 
@@ -152,8 +162,9 @@ En **Settings → Domains**, añade tu dominio y configura DNS según instruccio
 ## Archivos relevantes
 
 - `Dockerfile` — Imagen de producción (Gunicorn + WhiteNoise)
-- `requirements.txt` — Dependencias Python
-- `config/settings.py` — Configuración Django (lee variables de entorno)
+- `requirements.txt` — Dependencias Python (incluye `dj-database-url`)
+- `config/settings.py` — Configuración Django (lee `DATABASE_URL` o `POSTGRES_*`)
+- `core/management/commands/etl_mhw_data.py` — ETL por trozos (bulk + checkpoints)
 - `docker-compose.yml` — Solo para desarrollo local (Postgres + Tailwind watch)
 
 ## Desarrollo local con Docker Compose

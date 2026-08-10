@@ -189,6 +189,11 @@ class MonsterResistance(models.Model):
 
     class Meta:
         ordering = ["element"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["monster", "element"], name="uniq_monster_resistance_element"
+            )
+        ]
 
     def __str__(self):
         return f"{self.monster} resiste {self.element} ({self.stars}★)"
@@ -205,6 +210,11 @@ class MonsterAilment(models.Model):
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["monster", "name"], name="uniq_monster_ailment_name"
+            )
+        ]
 
     def __str__(self):
         return f"{self.monster} - {self.name}"
@@ -227,6 +237,11 @@ class MonsterReward(models.Model):
 
     class Meta:
         ordering = ["monster", "item"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["monster", "item"], name="uniq_monster_reward_item"
+            )
+        ]
 
     def __str__(self):
         return f"{self.monster} -> {self.item}"
@@ -368,6 +383,11 @@ class ArmorSkill(models.Model):
 
     class Meta:
         ordering = ["armor", "skill"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["armor", "skill"], name="uniq_armor_skill"
+            )
+        ]
 
     def __str__(self):
         return f"{self.armor} -> {self.skill} Lv{self.level}"
@@ -490,6 +510,11 @@ class CharmSkill(models.Model):
 
     class Meta:
         ordering = ["charm", "skill"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["charm", "skill"], name="uniq_charm_skill"
+            )
+        ]
 
     def __str__(self):
         return f"{self.charm} -> {self.skill} Lv{self.level}"
@@ -527,6 +552,11 @@ class DecorationSkill(models.Model):
 
     class Meta:
         ordering = ["decoration", "skill"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["decoration", "skill"], name="uniq_decoration_skill"
+            )
+        ]
 
     def __str__(self):
         return f"{self.decoration} -> {self.skill} Lv{self.level}"
@@ -570,3 +600,19 @@ class CraftingMaterial(models.Model):
 
     def __str__(self):
         return f"{self.quantity}× {self.item}"
+
+
+class EtlCheckpoint(models.Model):
+    """Registro de qué entidades del ETL ya se importaron.
+
+    Permite ejecutar el ETL "por trozos": cada entidad se marca como
+    completada al terminar, y una invocación posterior sin ``--entity``
+    solo importa las entidades pendientes.
+    """
+
+    entity = models.CharField(max_length=50, unique=True)
+    completed_at = models.DateTimeField(auto_now=True)
+    row_count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.entity} ({self.row_count} filas)"

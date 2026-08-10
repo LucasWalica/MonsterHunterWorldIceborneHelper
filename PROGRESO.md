@@ -32,6 +32,8 @@ App de referencia de Monster Hunter World: Iceborne (Django + HTMX + Tailwind).
 | 14 | **Drops en monster_detail** (recompensas/carves por monstruo con condiciones) | `/monsters/<pk>/` | ✅ |
 | 15 | **UI mejorada**: nav sticky, footer, loading global, cards hover, tipografía, spacing | toda la app | ✅ |
 | 16 | **Despliegue Vercel** (Dockerfile + guía) | `DEPLOY_VERCEL.md` | ✅ |
+| 17 | **ETL por trozos + bulk** (reanudable, idempotente, checkpoints) | `etl_mhw_data --entity X` | ✅ |
+| 18 | **Migración de datos a Supabase (Vercel)** completada desde local | BD de producción | ✅ |
 
 ## Estructura
 
@@ -43,7 +45,7 @@ core/
   services/       efr.py (cálculo EFR) · optimizer.py (búsqueda de sets)
   templatetags/   mhw_extras.py (get_item, element_badge, stars_html)
   management/commands/
-    etl_mhw_data.py    importa mhw-db
+    etl_mhw_data.py    ETL por trozos (bulk_create + checkpoints, idempotente)
     seed_hitzones.py   siembra hitzones desde core/data/hitzones.json
   templates/core/  páginas + partials HTMX (incl. weapon/decoration/charm/armor/skill/item partials)
 static/css/        output.css (compilado por Tailwind)
@@ -82,6 +84,22 @@ python manage.py seed_hitzones
 python manage.py runserver
 ```
 
+### ETL por trozos (recomendado para BD remota)
+
+El ETL usa upserts `bulk_create` (idempotentes) y checkpoints: cada entidad es
+un trozo que puede ejecutarse por separado y reanudarse sin duplicar datos.
+Ejecuta el ETL **desde local/CI** con la URL **no-pooling** (puerto 5432) de
+Supabase/Neon; Vercel solo sirve la app (usa la URL pooled).
+
+```bash
+python manage.py etl_mhw_data                  # importa trozos pendientes
+python manage.py etl_mhw_data --entity armor   # re-ejecuta un trozo
+python manage.py etl_mhw_data --all            # fuerza todo
+python manage.py etl_mhw_data --reset-checkpoints
+python manage.py etl_mhw_data --clean          # borra BD + checkpoints
+python manage.py seed_hitzones
+```
+
 ### Tests
 
 ```bash
@@ -109,11 +127,17 @@ Ver `DEPLOY_VERCEL.md` para la guía completa.
 
 Resumen rápido:
 
-1. Conecta repo a Vercel → detecta `Dockerfile`
-2. Configura variables de entorno (`DEBUG=0`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS=.vercel.app`, `CSRF_TRUSTED_ORIGINS=https://*.vercel.app`)
-3. Usa PostgreSQL con **pooled connection** (Neon, Supabase, Railway)
+1. Conecta repo a Vercel y detecta el `Dockerfile`
+2. Configura variables de entorno (`DEBUG=0`, `SECRET_KEY`, `DATABASE_URL` pooled, `ALLOWED_HOSTS=.vercel.app`, `CSRF_TRUSTED_ORIGINS=https://*.vercel.app`)
+3. Usa la **pooled connection** de Supabase (puerto 6543) en Vercel
 4. `vercel --prod` o push a `main`
-5. Corre migraciones y ETL una vez: `python manage.py migrate && python manage.py etl_mhw_data && python manage.py seed_hitzones`
+5. Migraciones y ETL se ejecutan **desde local** contra la URL **no-pooling** (5432): `python manage.py migrate && python manage.py etl_mhw_data && python manage.py seed_hitzones`
+
+## Estado de producción (Supabase/Vercel)
+
+- Migraciones aplicadas y **ETL completo por trozos** ejecutado desde local.
+- Conteos verificados: Monstruos 58 · Items 1186 · Skills 181 · Armaduras 1677 · Armas 1299 · Joyas 405 · Amuletos 314 · Materiales 8400 · Hitzones 172 (33 monstruos).
+- ETL verificado idempotente (`--all` no duplica) y reanudable (`--entity X` re-importa un trozo; sin flags importa solo pendientes).
 
 ## Notas de entorno
 
