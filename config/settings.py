@@ -71,6 +71,38 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
+import urllib.parse
+
+# Parámetros de query que libpq/psycopg2 entienden. El resto (p. ej.
+# "supa=base-pooler.x" o "pgbouncer=true", que solo usan los poolers de
+# Supabase/Prisma) se eliminan para no romper el DSN.
+_LIBPQ_OPTIONS = {
+    "sslmode",
+    "sslrootcert",
+    "sslcert",
+    "sslkey",
+    "sslcrl",
+    "sslpassword",
+    "target_session_attrs",
+}
+
+
+def _clean_database_url(url):
+    """Elimina parámetros de query no reconocidos por libpq."""
+    parsed = urllib.parse.urlsplit(url)
+    query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+    query = [(k, v) for k, v in query if k in _LIBPQ_OPTIONS]
+    return urllib.parse.urlunsplit(
+        (
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            urllib.parse.urlencode(query),
+            parsed.fragment,
+        )
+    )
+
+
 def _postgres_config(host, port, name, user, password):
     return {
         "ENGINE": "django.db.backends.postgresql",
@@ -94,7 +126,9 @@ _database_url = (
 
 if _database_url:
     DATABASES = {
-        "default": dj_database_url.parse(_database_url, conn_max_age=0)
+        "default": dj_database_url.parse(
+            _clean_database_url(_database_url), conn_max_age=0
+        )
     }
 elif os.environ.get("POSTGRES_HOST"):
     DATABASES = {
