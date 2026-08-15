@@ -14,21 +14,16 @@
             Pick a piece for each slot, then click its sockets to equip jewels.
         </p>
         <div class="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            {% for slot, armors in armor_by_slot.items %}
+            {% for slot in slots %}
             {% with piece=piece_by_slot|get_item:slot %}
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-3">
                 <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ slot|capfirst }}</label>
 
                 <select id="armor-select-{{ slot }}" name="{{ slot }}" class="hidden" aria-hidden="true">
                     <option value="">--</option>
-                    {% regroup armors by rank as rank_groups %}
-                    {% for group in rank_groups %}
-                    <optgroup label="{{ group.grouper|capfirst }} rank">
-                        {% for armor in group.list %}
-                        <option value="{{ armor.pk }}" {% if selected|get_item:slot == armor.pk %}selected{% endif %}>{{ armor.name }}</option>
-                        {% endfor %}
-                    </optgroup>
-                    {% endfor %}
+                    {% if piece %}
+                    <option value="{{ piece.pk }}" selected>{{ piece.name }}</option>
+                    {% endif %}
                 </select>
 
                 <button
@@ -59,13 +54,11 @@
                     {% with sd=deco_selected|get_item:deco_key %}
                     <select id="deco-select-{{ deco_key }}" name="deco{{ deco_key }}" class="hidden" aria-hidden="true">
                         <option value="">--</option>
-                        {% for deco in decorations %}
-                        {% if deco.slot <= slot_size %}
-                        {% with current=deco_selected|get_item:deco_key %}
-                        <option value="{{ deco.pk }}" {% if current.pk == deco.pk %}selected{% endif %}>{{ deco.name }}</option>
-                        {% endwith %}
+                        {% with sd=deco_selected|get_item:deco_key %}
+                        {% if sd %}
+                        <option value="{{ sd.pk }}" selected>{{ sd.name }}</option>
                         {% endif %}
-                        {% endfor %}
+                        {% endwith %}
                     </select>
                     <button
                         type="button"
@@ -105,9 +98,9 @@
             <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Charm</label>
             <select id="charm-select" name="charm" class="hidden" aria-hidden="true">
                 <option value="">--</option>
-                {% for charm in charms %}
-                <option value="{{ charm.pk }}" {% if charm_selected.pk == charm.pk %}selected{% endif %}>{{ charm.name }}</option>
-                {% endfor %}
+                {% if charm_selected %}
+                <option value="{{ charm_selected.pk }}" selected>{{ charm_selected.name }}</option>
+                {% endif %}
             </select>
             <div class="relative mt-1">
                 <input

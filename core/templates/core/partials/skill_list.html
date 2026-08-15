@@ -1,24 +1,20 @@
 {% if skills %}
 <div class="rounded-xl border border-slate-800 bg-slate-900 overflow-hidden">
-    <div class="grid grid-cols-4 gap-1 p-3 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400 bg-slate-900/50">
+    <div class="hidden sm:grid sm:grid-cols-3 gap-1 p-3 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400 bg-slate-900/50">
         <div>Skill</div>
         <div class="text-center">Max Lv</div>
         <div class="text-center">Description</div>
-        <div></div>
     </div>
     {% for skill in skills %}
-    <div class="grid grid-cols-4 gap-1 p-3 border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+    <div class="grid grid-cols-2 gap-2 p-3 border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors sm:grid-cols-3 sm:gap-1">
         <div class="flex items-center gap-3">
             <span class="font-medium text-slate-100">{{ skill.name }}</span>
         </div>
-        <div class="flex items-center justify-center">
+        <div class="flex items-center justify-end sm:justify-center">
             <span class="rounded bg-amber-500/20 px-2 py-0.5 text-xs font-bold text-amber-400">Lv{{ skill.max_level }}</span>
         </div>
-        <div class="flex items-center text-slate-400 text-sm truncate pr-4">
+        <div class="col-span-2 flex items-center text-slate-400 text-sm truncate sm:col-span-1 sm:pr-4">
             {{ skill.description|default:"No description" }}
-        </div>
-        <div class="flex items-center justify-end">
-            <a href="#" class="text-amber-400 hover:text-amber-300 text-sm" title="View details">Details</a>
         </div>
     </div>
     {% endfor %}

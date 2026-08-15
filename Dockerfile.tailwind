@@ -7,4 +7,4 @@ RUN wget -q "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAI
 
 WORKDIR /app
 
-CMD ["tailwindcss", "-i", "./src/input.css", "-o", "./static/css/output.css", "--watch"]
+CMD ["tailwindcss", "-i", "./src/input.css", "-o", "./static/css/output.css", "--minify", "--watch"]

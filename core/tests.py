@@ -10,6 +10,7 @@ from core.models import (
     Decoration,
     DecorationSkill,
     Monster,
+    MonsterWeakness,
     Skill,
     Weapon,
 )
@@ -320,6 +321,31 @@ class ViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Rathalos")
+
+    def test_monster_weakness_filter_sorts_by_stars(self):
+        MonsterWeakness.objects.create(
+            monster=self.monster, element="fire", stars=3
+        )
+        weak = Monster.objects.create(
+            game_id=2, name="Kulu Ya-Ku", type="large", species="Bird Wyvern"
+        )
+        MonsterWeakness.objects.create(monster=weak, element="fire", stars=1)
+
+        response = self.client.get(
+            reverse("core:monster_list"), {"weakness": "fire"}
+        )
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+        self.assertLess(content.index("Rathalos"), content.index("Kulu Ya-Ku"))
+
+    def test_monster_list_prefetches_weaknesses(self):
+        MonsterWeakness.objects.create(
+            monster=self.monster, element="fire", stars=3
+        )
+        response = self.client.get(reverse("core:monster_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["monsters"]), 1)
+        self.assertEqual(response.context["monsters"][0].weaknesses.count(), 1)
 
     def test_set_builder_returns_200(self):
         response = self.client.get(reverse("core:set_builder"))

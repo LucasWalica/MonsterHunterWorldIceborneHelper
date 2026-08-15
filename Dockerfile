@@ -34,5 +34,6 @@ USER appuser
 
 EXPOSE 8080
 
-# Gunicorn con 4 workers (ajustar según CPU)
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-"]
+# Gunicorn con threads (un contenedor Vercel tiene 1 vCPU: 2 workers es
+# óptimo en memoria/CPU; los threads amortizan el bloqueo en queries DB).
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--worker-class", "gthread", "--timeout", "60", "--access-logfile", "-", "--error-logfile", "-"]

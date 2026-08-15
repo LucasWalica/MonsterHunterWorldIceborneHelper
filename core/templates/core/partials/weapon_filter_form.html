@@ -1,5 +1,6 @@
 {% load mhw_extras %}
 <form
+    id="weapon-filter-form"
     hx-get="{% url 'core:weapon_list' %}"
     hx-target="#weapon-results"
     hx-swap="innerHTML"

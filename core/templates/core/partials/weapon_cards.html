@@ -1,0 +1,43 @@
+{% load mhw_extras %}
+{% for weapon in weapons %}
+<li>
+    <a href="{% url 'core:weapon_detail' weapon.pk %}" class="block h-full rounded-xl border border-slate-800 bg-slate-900 p-4 transition hover:border-amber-500/60 hover:bg-slate-800/60">
+        <div class="flex items-start justify-between gap-2">
+            <div>
+                <p class="font-semibold leading-tight">{{ weapon.name }}</p>
+                <p class="text-xs text-slate-400">{{ weapon.get_weapon_type_display }}</p>
+            </div>
+            <span class="shrink-0 text-xs text-slate-500">{{ weapon.rarity|rarity_stars }}</span>
+        </div>
+
+        <div class="mt-3 flex items-center gap-3">
+            <span class="text-xl font-bold text-amber-400">{{ weapon.attack_display }}</span>
+            {% if weapon.affinity %}
+            <span class="text-sm {% if weapon.affinity >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                {{ weapon.affinity|stringformat:"+d" }}%
+            </span>
+            {% endif %}
+            <span class="ml-auto flex gap-1">{{ weapon.slots|socket_spans }}</span>
+        </div>
+
+        {% if weapon.elements %}
+        <div class="mt-2 flex flex-wrap items-center gap-1.5">
+            {% for el in weapon.elements %}
+            <span class="inline-flex items-center gap-1">
+                {{ el.type|element_badge }}
+                <span class="text-xs text-slate-400">{{ el.damage }}{% if el.hidden %}*{% endif %}</span>
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="mt-3">
+            <div class="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+                {% for color, pct in weapon.sharpness|sharpness_segments %}
+                <span class="{{ color }}" style="width: {{ pct }}%"></span>
+                {% endfor %}
+            </div>
+        </div>
+    </a>
+</li>
+{% endfor %}

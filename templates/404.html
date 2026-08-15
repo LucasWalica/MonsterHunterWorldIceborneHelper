@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found · MHW Iceborne App{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center py-8 text-center">
+    <p class="text-4xl font-extrabold text-amber-400">404</p>
+    <h1 class="mt-4 text-2xl font-bold text-slate-100">Page not found</h1>
+    <p class="mt-2 text-sm text-slate-400">The page you are looking for doesn't exist or was moved.</p>
+    <a href="{% url 'core:home' %}" class="mt-6 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400">
+        Back to home
+    </a>
+</div>
+{% endblock %}

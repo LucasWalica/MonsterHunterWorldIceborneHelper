@@ -16,8 +16,8 @@ from core.models import Armor
 
 SLOT_ORDER = ("head", "chest", "gloves", "waist", "legs")
 
-DEFAULT_MAX_SETS = 10
-DEFAULT_MAX_STATES = 50_000
+DEFAULT_MAX_SETS = 8
+DEFAULT_MAX_STATES = 20_000
 
 
 def find_sets(

@@ -44,11 +44,6 @@ def weapon_search(request):
 
 
 def efr_calculator(request):
-    weapons = list(Weapon.objects.order_by("weapon_type", "name"))
-    weapons_by_type = {}
-    for weapon in weapons:
-        weapons_by_type.setdefault(weapon.weapon_type, []).append(weapon)
-
     weapon = None
     weapon_id = request.GET.get("weapon", "")
     if weapon_id:
@@ -113,8 +108,6 @@ def efr_calculator(request):
     }
 
     context = {
-        "weapons_by_type": weapons_by_type,
-        "weapon_types": dict(WEAPON_TYPES),
         "weapon": weapon,
         "sharpness": sharpness,
         "available_sharpness": available,

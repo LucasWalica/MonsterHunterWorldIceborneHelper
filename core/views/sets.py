@@ -93,35 +93,41 @@ def _selected_accessories(request):
     varias ranuras, p.ej. ``[4, 1]``).
     """
     deco_selected = {}
+    deco_pks = set()
     for slot in SLOT_ORDER:
         for index in range(5):
             key = f"{slot}-{index}"
             value = request.GET.get(f"deco{key}", "")
             if value.isdigit():
-                try:
-                    deco_selected[key] = Decoration.objects.get(pk=int(value))
-                except Decoration.DoesNotExist:
-                    continue
+                deco_pks.add(int(value))
+                deco_selected[key] = int(value)
+
+    if deco_pks:
+        by_id = {
+            deco.pk: deco
+            for deco in Decoration.objects.filter(pk__in=deco_pks).prefetch_related(
+                "decoration_skills__skill"
+            )
+        }
+        deco_selected = {
+            key: by_id[pk] for key, pk in deco_selected.items() if pk in by_id
+        }
 
     charm = None
     charm_value = request.GET.get("charm", "")
     if charm_value.isdigit():
         try:
-            charm = Charm.objects.get(pk=int(charm_value))
+            charm = Charm.objects.prefetch_related("charm_skills__skill").get(
+                pk=int(charm_value)
+            )
         except Charm.DoesNotExist:
             pass
     return deco_selected, charm
 
 
 def _set_builder_context(request):
-    selected, pieces = _selected_pieces(request)
+    _, pieces = _selected_pieces(request)
     deco_selected, charm = _selected_accessories(request)
-
-    armor_by_slot = {}
-    for slot in SLOT_ORDER:
-        armor_by_slot[slot] = Armor.objects.filter(type=slot).only(
-            "id", "name", "rank", "defense_max"
-        ).order_by("rank", "-defense_max", "name")
 
     totals = total_skills(pieces)
     for deco in deco_selected.values():
@@ -134,12 +140,9 @@ def _set_builder_context(request):
             totals[name] = totals.get(name, 0) + charm_skill.level
 
     return {
-        "armor_by_slot": armor_by_slot,
-        "selected": selected,
+        "slots": SLOT_ORDER,
         "pieces": pieces,
         "piece_by_slot": {piece.type: piece for piece in pieces},
-        "decorations": Decoration.objects.order_by("slot", "name"),
-        "charms": Charm.objects.order_by("name"),
         "deco_selected": deco_selected,
         "charm_selected": charm,
         "totals": sorted(totals.items(), key=lambda item: -item[1]),

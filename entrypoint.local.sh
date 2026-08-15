@@ -3,8 +3,8 @@
 set -e
 
 if command -v tailwindcss >/dev/null 2>&1; then
-    echo "==> Compilando Tailwind CSS (one-shot)"
-    tailwindcss -i ./src/input.css -o ./static/css/output.css
+    echo "==> Compilando Tailwind CSS (one-shot, minified)"
+    tailwindcss -i ./src/input.css -o ./static/css/output.css --minify
 fi
 
 echo "==> Aplicando migraciones"

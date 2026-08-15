@@ -6,7 +6,10 @@ from core.models import Armor, Item, Weapon
 def weapon_detail(request, pk):
     """Detalle de arma + árbol de forja (cadena anterior y ramas)."""
     weapon = get_object_or_404(
-        Weapon.objects.select_related("previous"), pk=pk
+        Weapon.objects.select_related("previous").prefetch_related(
+            "crafting_materials__item__monster_rewards__monster"
+        ),
+        pk=pk,
     )
 
     chain = []
@@ -35,7 +38,11 @@ def weapon_detail(request, pk):
 def armor_detail(request, pk):
     """Detalle de pieza de armadura + materiales de forja."""
     armor = get_object_or_404(
-        Armor.objects.prefetch_related("armor_skills__skill"), pk=pk
+        Armor.objects.prefetch_related(
+            "armor_skills__skill",
+            "crafting_materials__item__monster_rewards__monster",
+        ),
+        pk=pk,
     )
     return render(
         request,

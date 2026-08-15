@@ -18,6 +18,8 @@ SORT_OPTIONS = {
     "rarity": "-rarity",
 }
 
+PAGE_SIZE = 150
+
 
 def weapon_list(request):
     """Lista y filtro de armas. Con HTMX devuelve solo el partial."""
@@ -64,16 +66,30 @@ def weapon_list(request):
         queryset = queryset.filter(slots__len__gte=int(slots))
         filters["slots"] = slots
 
-    sort = SORT_OPTIONS.get(request.GET.get("sort", ""), SORT_OPTIONS["name"])
+    sort_key = request.GET.get("sort", "")
+    sort = SORT_OPTIONS.get(sort_key, SORT_OPTIONS["name"])
     if sort != "name":
         queryset = queryset.order_by(sort, "name")
+    filters["sort"] = sort_key
 
-    weapons = list(queryset[:300])
+    total = queryset.count()
+
+    try:
+        offset = max(int(request.GET.get("offset", 0)), 0)
+    except (TypeError, ValueError):
+        offset = 0
+
+    weapons = list(queryset[offset : offset + PAGE_SIZE])
+    has_more = offset + len(weapons) < total
+    remaining = total - offset - len(weapons)
 
     context = {
         "weapons": weapons,
         "count": len(weapons),
-        "total": queryset.count(),
+        "total": total,
+        "has_more": has_more,
+        "next_offset": offset + len(weapons),
+        "remaining": remaining,
         "filters": filters,
         "weapon_types": WEAPON_TYPES,
         "element_choices": ELEMENT_FILTER_CHOICES,
@@ -81,5 +97,7 @@ def weapon_list(request):
     }
 
     if request.htmx:
+        if request.GET.get("load_more"):
+            return render(request, "core/partials/weapon_load_more.html", context)
         return render(request, "core/partials/weapon_list.html", context)
     return render(request, "core/weapons.html", context)

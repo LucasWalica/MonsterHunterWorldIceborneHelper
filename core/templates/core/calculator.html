@@ -37,8 +37,8 @@
                     hx-target="#weapon-suggestions"
                     hx-swap="innerHTML"
                     hx-include="this"
-                    oninput="filterWeaponOptions(this.value)"
                     onkeydown="handleWeaponSearchKeydown(event)"
+                    value="{% if weapon %}{{ weapon.name }}{% endif %}"
                     class="w-full rounded-lg border border-slate-700 bg-slate-800 py-2 pl-9 pr-9 text-sm text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                 />
                 <button
@@ -62,20 +62,14 @@
                 hx-swap="innerHTML"
                 hx-include="closest form"
                 hx-push-url="true"
-                class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+                class="hidden"
+                aria-hidden="true"
             >
-                <option value="">-- Select a weapon --</option>
-                {% for type_key, weapons in weapons_by_type.items %}
-                <optgroup label="{{ weapon_types|get_item:type_key }}">
-                    {% for w in weapons %}
-                    <option value="{{ w.pk }}" {% if weapon.pk == w.pk %}selected{% endif %}>
-                        {{ w.name }} ({{ w.attack_display }})
-                    </option>
-                    {% endfor %}
-                </optgroup>
-                {% endfor %}
+                <option value="">--</option>
+                {% if weapon %}
+                <option value="{{ weapon.pk }}" selected>{{ weapon.name }} ({{ weapon.attack_display }})</option>
+                {% endif %}
             </select>
-            <p id="weapon-search-empty" class="mt-2 hidden text-sm text-slate-500">No results for that search.</p>
         </div>
 
         <div id="efr-result">
@@ -85,28 +79,6 @@
 </div>
 
 <script>
-    function filterWeaponOptions(query) {
-        const select = document.getElementById('weapon-select');
-        const emptyMsg = document.getElementById('weapon-search-empty');
-        const q = query.trim().toLowerCase();
-        let visible = 0;
-
-        select.querySelectorAll('optgroup').forEach(group => {
-            let groupVisible = false;
-            group.querySelectorAll('option').forEach(opt => {
-                const matches = !q || opt.textContent.toLowerCase().includes(q);
-                opt.hidden = !(matches || opt.selected);
-                if (!opt.hidden) {
-                    groupVisible = true;
-                    visible += 1;
-                }
-            });
-            group.hidden = !groupVisible;
-        });
-
-        emptyMsg.classList.toggle('hidden', visible > 0 || q === '');
-    }
-
     function closeWeaponSuggestions() {
         const container = document.getElementById('weapon-suggestions');
         if (container) container.innerHTML = '';
@@ -131,14 +103,12 @@
         select.value = pk;
         input.value = name;
         closeWeaponSuggestions();
-        filterWeaponOptions(name);
         select.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     function clearWeaponSearch() {
         const input = document.getElementById('weapon-search');
         input.value = '';
-        filterWeaponOptions('');
         closeWeaponSuggestions();
         input.focus();
     }

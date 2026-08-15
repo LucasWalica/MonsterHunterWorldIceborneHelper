@@ -36,6 +36,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
+    "django.middleware.http.ConditionalGetMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -143,6 +145,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Seguridad en producción
 if not DEBUG:
+    # Vercel termina TLS en su proxy y reenvía a este contenedor por HTTP;
+    # confiamos en X-Forwarded-Proto para que is_secure() sea True (evita
+    # bucles de redirect SECURE_SSL_REDIRECT -> https).
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

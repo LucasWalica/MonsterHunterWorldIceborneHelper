@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.shortcuts import get_object_or_404, render
 
 from core.models import (
@@ -15,7 +15,7 @@ WEAKNESS_FILTER_CHOICES = ELEMENT_TYPES + STATUS_TYPES
 
 def monster_list(request):
     """Bestiario con búsqueda en tiempo real (HTMX) y filtros."""
-    queryset = Monster.objects.all()
+    queryset = Monster.objects.all().prefetch_related("weaknesses")
 
     filters = {}
 
@@ -28,7 +28,13 @@ def monster_list(request):
 
     weakness = request.GET.get("weakness", "")
     if weakness:
-        queryset = queryset.filter(weaknesses__element=weakness).distinct()
+        # Anotamos el nivel de debilidad al elemento filtrado para poder
+        # ordenar de mayor a menor debilidad.
+        queryset = queryset.filter(weaknesses__element=weakness).annotate(
+            weakness_stars=Max(
+                "weaknesses__stars", filter=Q(weaknesses__element=weakness)
+            )
+        )
         filters["weakness"] = weakness
 
     monster_type = request.GET.get("type", "")
@@ -36,7 +42,8 @@ def monster_list(request):
         queryset = queryset.filter(type=monster_type)
         filters["type"] = monster_type
 
-    monsters = list(queryset.order_by("name"))
+    order_by = ("-weakness_stars", "name") if weakness else ("name",)
+    monsters = list(queryset.order_by(*order_by))
 
     context = {
         "monsters": monsters,
